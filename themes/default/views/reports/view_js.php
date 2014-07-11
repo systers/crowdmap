@@ -28,6 +28,8 @@ jQuery(window).load(function() {
 
 		// Zoom level
 		zoom: <?php echo ($incident_zoom) ? $incident_zoom : intval(Kohana::config('settings.default_zoom')); ?>,
+		maxExtent: new OpenLayers.Bounds(8, 44.5, 19, 50),
+        restrictedExtent: new OpenLayers.Bounds(8, 44.5, 19, 50),
 
 		// Map center
 		center: {
@@ -37,7 +39,7 @@ jQuery(window).load(function() {
 
 		// Map controls
 		mapControls: [
-			new OpenLayers.Control.Navigation({ dragPanOptions: { enableKinetic: true } }),
+			new OpenLayers.Control.Navigation({ 'zoomWheelEnabled': false}),
 			new OpenLayers.Control.Zoom(),
 			new OpenLayers.Control.MousePosition({
 				formatOutput: Ushahidi.convertLongLat
@@ -45,7 +47,7 @@ jQuery(window).load(function() {
 			new OpenLayers.Control.ScaleLine(),
 			new OpenLayers.Control.Scale('mapScale'),
 			new OpenLayers.Control.LayerSwitcher(),
-			new OpenLayers.Control.Attribution()
+			new OpenLayers.Control.Attribution(), 
 		],
 
 		// Base layers

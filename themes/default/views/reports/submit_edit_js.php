@@ -75,8 +75,8 @@
 				eventListeners: {
 					"zoomend": incidentZoom
 				},
-				maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
-				maxResolution: 156543.0339
+				 maxExtent: new OpenLayers.Bounds(8, 44.5, 19, 50),
+                 restrictedExtent: new OpenLayers.Bounds(8, 44.5, 19, 50)
 			};
 			
 			// Now initialise the map
@@ -84,7 +84,7 @@
 			
 			<?php echo map::layers_js(FALSE); ?>
 			map.addLayers(<?php echo map::layers_array(FALSE); ?>);
-			map.addControl(new OpenLayers.Control.Navigation());
+			map.addControl(new OpenLayers.Control.Navigation({ zoomWheelEnabled: false}));
 			map.addControl(new OpenLayers.Control.Zoom());
 			map.addControl(new OpenLayers.Control.MousePosition({
 				formatOutput: Ushahidi.convertLongLat
@@ -92,6 +92,7 @@
 			map.addControl(new OpenLayers.Control.ScaleLine());
 			map.addControl(new OpenLayers.Control.Scale('mapScale'));
 			map.addControl(new OpenLayers.Control.LayerSwitcher());
+			map.zoomToMaxExtent(8, 44.5, 19, 50);
 			
 			// Vector/Drawing Layer Styles
 			style1 = new OpenLayers.Style({
