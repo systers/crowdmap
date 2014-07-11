@@ -196,6 +196,8 @@ jQuery(function() {
 
 		// Zoom level at which to display the map
 		zoom: <?php echo Kohana::config('settings.default_zoom'); ?>,
+		maxExtent: new OpenLayers.Bounds(8, 44.5, 19, 50),
+        restrictedExtent: new OpenLayers.Bounds(8, 44.5, 19, 50),
 
 		// Redraw the layers when the zoom level changes
 		redrawOnZoom: <?php echo Kohana::config('settings.allow_clustering') == 1 ? "true" : "false"; ?>,
@@ -208,7 +210,7 @@ jQuery(function() {
 
 		// Map controls
 		mapControls: [
-			new OpenLayers.Control.Navigation({ dragPanOptions: { enableKinetic: true } }),
+			new OpenLayers.Control.Navigation({ 'zoomWheelEnabled': false}),
 			new OpenLayers.Control.Attribution(),
 			new OpenLayers.Control.Zoom(),
 			new OpenLayers.Control.MousePosition({
@@ -240,6 +242,7 @@ jQuery(function() {
 		url: reportsURL,
 		transform: false
 	}, true, true);
+	 map.zoomToMaxExtent(8, 44.5, 19, 50);c
 
 
 	// Register the referesh timeline function as a callback
