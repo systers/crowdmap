@@ -25,6 +25,19 @@ class customforms_Core {
 	}
 
 	/**
+	 * Retrieve Custom Forms Fields for Reports filter
+	 */
+	public static function get_custom_reports_filter_fields()
+        {
+                $custom_reports_filter_fields = ORM::factory('form_field')
+                ->where('field_name', '=', 'PCV NAME',
+                        'OR', 'field_name', '=', 'COUNTERPART NAME',
+                        'OR', 'field_name', '=', 'CONTACT PERSON',
+                        'OR', 'field_name', '=', 'DIRECTOR NAME')
+                ->find_all();
+        }
+
+	/**
 	 * Retrieve Custom Form Fields
 	 * @param bool|int $incident_id The unique incident_id of the original report
 	 * @param int $form_id The unique form_id. If none selected, retrieve custom form fields from ALL custom forms
