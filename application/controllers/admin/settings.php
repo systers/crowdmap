@@ -44,6 +44,7 @@ class Settings_Controller extends Admin_Controller {
 		$this->themes->js = new View('admin/settings/site_js');
 
 		// setup and initialize form field names
+		// JP: Added dashboard redirect and enable notifications booleans.
 		$form = array(
 			'site_name' => '',
 			'site_tagline' => '',
@@ -72,6 +73,8 @@ class Settings_Controller extends Admin_Controller {
 			'private_deployment' => '',
 			'manually_approve_users' => '',
 			'require_email_confirmation' => '',
+			'dashboard_redirect' => '',
+			'enable_report_notifications' => '',
 			'google_analytics' => '',
 			'api_akismet' => '',
 			'alert_days' => 0, // HT: No of days of alert to be sent
@@ -93,6 +96,7 @@ class Settings_Controller extends Admin_Controller {
 			$post->pre_filter('trim', TRUE);
 
 			// Add some rules, the input field, followed by a list of checks, carried out in order
+			// JP: Added dashboard redirect and enable notifications rules.
 
 			$post->add_rules('site_name', 'required', 'length[3,250]');
 			$post->add_rules('site_tagline', 'length[3,250]');
@@ -118,6 +122,8 @@ class Settings_Controller extends Admin_Controller {
 			$post->add_rules('private_deployment','required','between[0,1]');
 			$post->add_rules('manually_approve_users','required','between[0,1]');
 			$post->add_rules('require_email_confirmation','required','between[0,1]');
+			$post->add_rules('dashboard_redirect','required','between[0,1]');
+			$post->add_rules('enable_report_notifications','required','between[0,1]');
 			$post->add_rules('google_analytics','length[0,20]');
 			$post->add_rules('api_akismet','length[0,100]', 'alpha_numeric');
 			$post->add_rules('alert_days', 'numeric'); // HT: No of days of alert to be sent
@@ -211,6 +217,16 @@ class Settings_Controller extends Admin_Controller {
 				// Everything is A-Okay!
 				$form_saved = TRUE;
 
+				// JP: If notifications are off, remove any existing notifications from the database.
+				if ($post->enable_report_notifications == 0)
+				{
+					foreach(ORM::factory('user')->where('report_notifications >= 1')->find_all() as $user)
+					{
+						$user->report_notifications = 0;
+						$user->save();
+					}
+				}
+
 				// Action::site_settings_modified - Site settings have changed
 				Event::run('ushahidi_action.site_settings_modified');
 
@@ -246,6 +262,7 @@ class Settings_Controller extends Admin_Controller {
 			$settings = Settings_Model::get_array();
 			$settings['alert_days'] = (isset($settings['alert_days'])) ? $settings['alert_days'] : 0; // HT: might not be in database so calling manually retrun NULL if not exist
 
+			// JP: Added dashboard redirect and enable notifications.
 			$form = array(
 				'site_name' => $settings['site_name'],
 				'site_tagline' => $settings['site_tagline'],
@@ -273,6 +290,8 @@ class Settings_Controller extends Admin_Controller {
 				'private_deployment' => $settings['private_deployment'],
 				'manually_approve_users' => $settings['manually_approve_users'],
 				'require_email_confirmation' => $settings['require_email_confirmation'],
+				'dashboard_redirect' => $settings['dashboard_redirect'],
+				'enable_report_notifications' => $settings['enable_report_notifications'],
 				'google_analytics' => $settings['google_analytics'],
 				'api_akismet' => $settings['api_akismet'],
 				'alert_days' => $settings['alert_days'] // HT: No of days of alert to be sent
@@ -337,6 +356,109 @@ class Settings_Controller extends Admin_Controller {
 		$locales = ush_locale::get_i18n(TRUE);
 		$this->template->content->locales_array = $locales;
 		$this->cache->set('locales', $locales, array('locales'), 604800);
+	}
+
+	/**
+	 * JP: Homepage settings
+	 */
+	public function homepage() {
+
+
+		$this->template->content = new View('admin/settings/homepage');
+		$this->template->content->title = Kohana::lang('ui_admin.settings');
+
+		// setup and initialize form field names
+		$form = array
+		(
+			'enable_media_filters' => '',
+			'enable_chronological_filter' => '',
+			'enable_category_filters' => '',
+			'enable_category_filters_showhide' => '',
+			'show_reporting_options' => '',
+			'show_submit_report_tab' => '',
+			'enable_filter_search' => '',
+		);
+
+		//	Copy the form as errors, so the errors will be stored with keys
+		//	corresponding to the form field names
+		$errors = $form;
+		$form_error = FALSE;
+		$form_saved = FALSE;
+
+		// check, has the form been submitted, if so, setup validation
+		if ($_POST)
+		{
+			// Instantiate Validation, use $post, so we don't overwrite $_POST
+			// fields with our own things
+			$post = new Validation($_POST);
+
+			// Add some filters
+			$post->pre_filter('trim', TRUE);
+
+			// Add some rules, the input field, followed by a list of checks, carried out in order
+
+			$post->add_rules('enable_media_filters','required','between[0,1]');
+			$post->add_rules('enable_chronological_filter','required','between[0,1]');
+			$post->add_rules('enable_category_filters','required','between[0,1]');
+			$post->add_rules('enable_category_filters_showhide','required','between[0,1]');
+			$post->add_rules('show_reporting_options','required','between[0,1]');
+			$post->add_rules('show_submit_report_tab','required','between[0,1]');
+			$post->add_rules('enable_filter_search','required','between[0,1]');
+
+			// Test to see if things passed the rule checks
+			if ($post->validate())
+			{
+				// Yes! everything is valid
+				Settings_Model::save_all($post);
+
+				// Delete Settings Cache
+				$this->cache->delete('settings');
+				$this->cache->delete_tag('settings');
+
+				// Everything is A-Okay!
+				$form_saved = TRUE;
+
+				// repopulate the form fields
+				$form = arr::overwrite($form, $post->as_array());
+
+			}
+
+			// No! We have validation errors, we need to show the form again,
+			// with the errors
+			else
+			{
+				// repopulate the form fields
+				$form = arr::overwrite($form, $post->as_array());
+
+				// populate the error fields, if any
+				$errors = arr::overwrite($errors, $post->errors('settings'));
+				$form_error = TRUE;
+			}
+
+		}
+		else
+		{
+
+			$settings = Settings_Model::get_settings(array_keys($form));
+			// initialize form
+			$form = array
+			(
+				'enable_media_filters' => $settings['enable_media_filters'],
+				'enable_chronological_filter' => $settings['enable_chronological_filter'],
+				'enable_category_filters' => $settings['enable_category_filters'],
+				'enable_category_filters_showhide' => $settings['enable_category_filters_showhide'],
+				'show_reporting_options' => $settings['show_reporting_options'],
+				'show_submit_report_tab' => $settings['show_submit_report_tab'],
+				'enable_filter_search' => $settings['enable_filter_search']
+			);
+		}
+
+		$this->template->content->form = $form;
+		$this->template->content->errors = $errors;
+		$this->template->content->form_error = $form_error;
+		$this->template->content->form_saved = $form_saved;
+		$this->template->content->yesno_array = array('1'=>utf8::strtoupper(Kohana::lang('ui_main.yes')),'0'=>utf8::strtoupper(Kohana::lang('ui_main.no')));
+
 	}
 
 	/**
