@@ -46,12 +46,16 @@ class reports_Core {
 		$post = Validation::factory($post)
 				->pre_filter('trim', TRUE)
 				->add_rules('incident_title','required', 'length[3,200]')
-				->add_rules('incident_description','required')
 				->add_rules('incident_date','required','date_mmddyyyy')
 				->add_rules('incident_hour','required','between[1,12]')
 				->add_rules('incident_minute','required','between[0,59]')
 				->add_rules('incident_ampm','required');
-			
+
+		// JP: Only make the Description field required if it is active
+		if (isset($post->description_active) AND $post->description_active)
+		{
+			$post->add_rules('incident_description', 'required');
+		}
 		if (isset($post->incident_ampm) AND $post->incident_ampm != "am" AND $post->incident_ampm != "pm")
 		{
 			$post->add_error('incident_ampm','values');
@@ -232,8 +236,9 @@ class reports_Core {
 			$incident->user_id = Auth::instance()->get_user()->id;
 		}
 		
+		// JP: Grab the report title and description, but do not save the description to the database if the descrition field is not active.
 		$incident->incident_title = $post->incident_title;
-		$incident->incident_description = $post->incident_description;
+		$incident->incident_description = (($post['description_active']) ? $post->incident_description : null);
 
 		$incident_date=explode("/",$post->incident_date);
 		// Where the $_POST['date'] is a value posted by form in mm/dd/yyyy format
@@ -300,6 +305,123 @@ class reports_Core {
 		// Save the incident
 		$incident->save();
 	}
+
+	/**
+	 * JP: Function to add/remove notifications upon approval,
+	 *     unapproval, or deletion action.
+	 *
+	 * @param string $action
+	 * @param mixed $incident
+	 */
+	public static function send_notifications($action, $incident)
+	{
+		// To check whether a user has seen a report while active 
+		// (i.e. approved and on the reports list), we're going to 
+		// use the verified table to get the window(s) of time(s) in 
+		// which the report was visible on the reports list. Then 
+		// we look to see if the last time the user has viewed the 
+		// reports list is after an approval date but before an 
+		// unapproval date. If this is true, we do nothing with 
+		// his/her notifications. Otherwise, we add or subtract 
+		// a notification depending on the action.
+
+		$approved = ORM::factory('verify')->where('incident_id = '.$incident->id.' AND (verified_status = 1 OR verified_status = 3)')->find_all();
+		$unapproved = ORM::factory('verify')->where('incident_id = '.$incident->id.' AND (verified_status = 0 OR verified_status = 2)')->find_all();
+
+		// Who is doing the action?
+		$action_performer_id = 0;
+		if (Auth::instance()->get_user() instanceof User_Model)
+		{
+			$action_performer_id = Auth::instance()->get_user()->id;
+		}
+
+		// Approve Action
+		if ($action == 'a')
+		{
+			// Loop through users with less than 99 notifications.
+			foreach(ORM::factory('user')->where('report_notifications <= 98')->find_all() as $user)
+			{
+				$already_seen = false;
+
+				// Check the dates in the verified table.
+				while ($already_seen == false && $approved->valid() && $unapproved->valid())
+				{
+					$a = $approved->current()->verified_date;
+					$u = $unapproved->current()->verified_date;
+					$last = $user->last_reports_view;
+
+					if ($a <= $last && $u >= $last)
+					{
+						$already_seen = true;
+					}
+					else
+					{
+						$approved->next();
+						$unapproved->next();
+					}
+				}
+
+				$approved->rewind();
+				$unapproved->rewind();
+
+				// If the report has not already been seen AND the current user in this loop iteration is not the author of the report AND this user is also not the one performing the approval action, add a notification.
+				if (!($already_seen) && $user->id != $incident->user_id && $user->id != $action_performer_id)
+				{
+					$user->report_notifications++;
+					$user->save();
+				}
+			}
+		}
+		// Unapprove Action or Delete Action
+		else if ($action == 'u' || $action == 'd')
+		{
+			// If we're deleting an inactive report, do nothing.
+			if ($action == 'd' && $incident->incident_active == '0')
+			{
+				return;
+			}
+
+			// Otherwise, loop through users with at least one notification.
+			foreach(ORM::factory('user')->where('report_notifications >= 1')->find_all() as $user)
+			{
+				$already_seen = false;
+
+				// Check the dates in the verified table.
+				while ($already_seen == false && $approved->valid() && $unapproved->valid())
+				{
+					$a = $approved->current()->verified_date;
+					$u = $unapproved->current()->verified_date;
+					$last = $user->last_reports_view;
+
+					if ($a <= $last && $u >= $last)
+					{
+						$already_seen = true;
+					}
+					else
+					{
+						$approved->next();
+						$unapproved->next();
+					}
+				}
+
+				// Since there should be one more approval than unapproval, we need to check this last approved date after the loop.
+				if ($approved->valid() && $approved->current()->verified_date <= $user->last_reports_view)
+				{
+					$already_seen = true;
+				}
+
+				$approved->rewind();
+				$unapproved->rewind();
+
+				// If the report has not already been seen AND the current user in this loop iteration is not the author of the report AND this user is not the one performing the unapproval or deletion action, subtract a notification. 
+				if (!($already_seen) && $user->id != $incident->user_id && $user->id != $action_performer_id)
+				{
+					$user->report_notifications--;
+					$user->save();
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Function to record the verification/approval actions
@@ -321,17 +443,19 @@ class reports_Core {
 		}
 		$verify->verified_date = date("Y-m-d H:i:s",time());
 		
-		if ($incident->incident_active == 1)
+		// JP: With the logic that was here before, the verified status would never become 3. I reordered the ifs and elseifs to fix this.
+
+		if ($incident->incident_active == 1 AND $incident->incident_verified == 1)
 		{
-			$verify->verified_status = '1';
+			$verify->verified_status = '3';
 		}
 		elseif ($incident->incident_verified == 1)
 		{
 			$verify->verified_status = '2';
 		}
-		elseif ($incident->incident_active == 1 AND $incident->incident_verified == 1)
+		elseif ($incident->incident_active == 1)
 		{
-			$verify->verified_status = '3';
+			$verify->verified_status = '1';
 		}
 		else
 		{
@@ -740,6 +864,8 @@ class reports_Core {
 	 *	- incident mode
 	 *	- media
 	 *	- location radius
+	 * JP: added one additional URL parameter:
+	 *	- search
 	 *
 	 * @param bool $paginate Optionally paginate the incidents - Default is FALSE
 	 * @param int $items_per_page No. of items to show per page
@@ -1018,6 +1144,101 @@ class reports_Core {
 			}
 			
 		} // End of handling cff
+
+		// JP: Check if the reports are being filtered via search.
+		if (isset($url_data['q']) AND is_string($url_data['q']))
+		{
+			$filter_search_query = $url_data['q'];
+			if (!empty($filter_search_query))
+			{
+
+				$search_query = "";
+				$keyword_string = "";
+				$where_string = "";
+				$plus = "";
+				$or = "";
+				$search_info = "";
+				$html = "";
+				$pagination = "";
+
+				// Stop words that we won't search for
+				// Add words as needed!!
+				$stop_words = array('the', 'and', 'a', 'to', 'of', 'in', 'i', 'is', 'that', 'it',
+					'on', 'you', 'this', 'for', 'but', 'with', 'are', 'have', 'be',
+					'at', 'or', 'as', 'was', 'so', 'if', 'out', 'not'
+		);
+
+					// Phase 1 - Fetch the search string and perform initial sanitization
+					$keyword_raw = preg_replace('#/\w+/#', '', $filter_search_query);
+
+					// Phase 2 - Strip the search string of any HTML and PHP tags that may be present for additional safety
+					$keyword_raw = strip_tags($keyword_raw);
+
+					// Phase 3 - Apply Kohana's XSS cleaning mechanism
+					$keyword_raw = security::xss_clean($keyword_raw);
+
+				// Database instance
+				$db = new Database();
+
+				$keywords = explode(' ', $keyword_raw);
+				if (is_array($keywords) AND ! empty($keywords)) 
+				{
+					array_change_key_case($keywords, CASE_LOWER);
+					$i = 0;
+
+					foreach($keywords as $value)
+					{
+						if ( ! in_array($value,$stop_words) AND ! empty($value))
+						{
+							// Escape the string for query safety
+							$chunk = $db->escape_str($value);
+
+							if ($i > 0)
+							{
+								$plus = ' + ';
+								$or = ' OR ';
+							}
+
+							$where_string = $where_string.$or."(incident_title LIKE '%$chunk%' OR incident_description LIKE '%$chunk%')";
+							$i++;
+						}
+					}
+
+					if ( ! empty($keyword_string) AND !empty($where_string))
+					{
+						// Limit the result set to only those reports that have been approved
+						$where_string = '(' . $where_string . ') AND incident_active = 1';
+						$search_query = "SELECT *, (".$keyword_string.") AS relevance FROM "
+										. $table_prefix."incident "
+										. "WHERE ".$where_string." "
+										. "ORDER BY relevance DESC LIMIT ?, ?";
+					}
+				}
+
+				$rows = $db->query('SELECT DISTINCT id FROM '
+				    .$table_prefix.'incident WHERE '.$where_string);
+				
+				$incident_ids = '';
+				foreach ($rows as $row)
+				{
+					if ($incident_ids != '')
+					{
+							$incident_ids .= ',';
+					}
+
+					$incident_ids .= $row->id;
+				}
+				//make sure there are IDs found
+				if ($incident_ids != '')
+				{
+					array_push(self::$params, 'i.id IN ('.$incident_ids.')');
+				}
+				else
+				{
+					array_push(self::$params, 'i.id IN (0)');
+				}
+			}
+		}
 		
 		// In case a plugin or something wants to get in on the parameter fetching fun
 		Event::run('ushahidi_filter.fetch_incidents_set_params', self::$params);

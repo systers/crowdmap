@@ -103,10 +103,32 @@ class nav_Core {
 
 		Event::run('ushahidi_filter.nav_main_tabs', $menu_items);
 
+		// JP: If report notifications are enabled and the current user, if any, has notifications, they will be echoed out in the reports list item. Notifications will also be reset (and the datetime will be logged) if the current page is "reports," i.e. the user is viewing the reports tab.
 		foreach( $menu_items as $item )
 		{
 			$active = ($this_page == $item['page']) ? ' class="active"' : '';
-			echo '<li><a href="'.$item['url'].'"'.$active.'>'.$item['name'].'</a></li>';
+			echo '<li>';
+			echo '<a href="'.$item['url'].'"'.$active.'>'.$item['name'].'</a>';
+
+			if (isset(Auth::instance()->get_user()->id))
+			{
+				$loggedin_user = Auth::instance()->get_user();
+				if ($this_page == 'reports')
+				{
+					$loggedin_user->report_notifications = 0;
+					$loggedin_user->last_reports_view = date("Y-m-d H:i:s", time());
+					$loggedin_user->save();
+				}
+				else if ($item['page'] == 'reports')
+				{
+					if (Kohana::config('settings.enable_report_notifications') && $loggedin_user->report_notifications > 0)
+					{
+						echo ('<span class="notification-bubble">'.$loggedin_user->report_notifications.'</span>');
+					}
+				}
+			}
+
+			echo '</li>';
 		}
 
 		// Action::nav_admin_reports - Add items to the admin reports navigation tabs

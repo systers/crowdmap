@@ -38,7 +38,8 @@ class download_Core {
 		}
 			
 		// Make sure valid format is passed
-		if ($post->format !='csv' AND $post->format !='xml')
+		// JP: Added HTML to the valid formats.
+		if ($post->format !='csv' AND $post->format !='xml' AND $post->format != 'html')
 		{
 			$post->add_error('format','valid');
 		}	
@@ -661,6 +662,195 @@ class download_Core {
 		// Print
 		return $writer->outputMemory(TRUE);
 		
+	}
+
+	/**
+	 * JP: Download Reports in HTML format
+	 * @param Validation $post Validation object with the download criteria 
+	 * @param array $incidents Reports to be downloaded
+	 * @param array $custom_forms Custom form field structure and values
+	 * @return string HTML content
+	 */
+	public static function download_html($post, $incidents, $custom_forms)
+	{
+
+		$h = array();
+
+		$h[] = '<!DOCTYPE html>';
+		$h[] = '  <head>';
+		$h[] = '    <title>';
+		$h[] = '      Downloaded Reports';
+		$h[] = '    </title>';
+		$h[] = '    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
+		$h[] = '    <style>';
+		$h[] = '      table { border-collapse: collapse; }';
+		$h[] = '      table thead tr { background: #CCCCCC; }';
+		$h[] = '      table thead tr th, table tbody tr td { padding: 0.75em; border: 1px solid #AAAAAA; }';
+		$h[] = '      table tbody tr.even, table tbody tr.alt, table tbody tr:nth-of-type(even) { background: #DDDDDD; }';
+		$h[] = '    </style>';
+		$h[] = '  </head>';
+		$h[] = '  <body>';
+		$h[] = '    <table>';
+		$h[] = '      <thead>';
+		$h[] = '        <tr>';
+
+		$table_headers = array("#","FORM #","TITLE","DATE");
+		$item_map = array(
+		    1 => 'LOCATION',
+		    2 => 'DESCRIPTION',
+		    3 => 'CATEGORY',
+		    4 => 'LATITUDE',
+		    5 => 'LONGITUDE',
+		    7 => array('FIRST NAME','LAST NAME','EMAIL')
+		);
+
+		// Ensure column order is always the same
+		sort($post->data_include);
+
+		foreach($post->data_include as $item)
+		{
+			if ( (int)$item == 6)
+			{
+				foreach($custom_forms as $field_name)
+				{
+					$table_headers[] = $field_name['field_name']."-".$field_name['form_id'];
+				}
+
+			}
+			elseif (is_array($item_map[$item]))
+			{
+				foreach ($item_map[$item] as $i)
+				{
+					$table_headers[] = $i;
+				}
+			}
+			elseif (array_key_exists($item, $item_map))
+			{
+				$table_headers[] = $item_map[$item];
+			}
+		}
+
+		$table_headers[] = 'APPROVED';
+		$table_headers[] = 'VERIFIED';
+
+		// Incase a plugin would like to add some custom fields
+		Event::run('ushahidi_filter.report_download_table_header', $html_headers);
+
+		foreach ($table_headers as $header)
+		{
+			$h[] = '          <th>';
+			$h[] = '            '.$header;
+			$h[] = '          </th>';
+		}
+
+		$h[] = '        </tr>';
+		$h[] = '      </thead>';
+		$h[] = '      <tbody>';
+
+		foreach ($incidents as $incident)
+		{
+			$table_data = array();
+			$table_data[] = $incident->id;
+			$table_data[] = $incident->form_id;
+			$table_data[] = $incident->incident_title;
+			$table_data[] = $incident->incident_date;
+
+			foreach($post->data_include as $item)
+			{
+				switch ($item)
+				{
+					case 1:
+					$table_data[] = $incident->location->location_name;
+					break;
+
+					case 2:
+					$table_data[] = $incident->incident_description;
+					break;
+
+					case 3:
+					$cat_titles = array();
+					foreach($incident->incident_category as $category)
+					{
+						if ($category->category->category_title)
+						{
+							$cat_titles[] = $category->category->category_title;
+						}
+					}
+					$table_data[] = implode(', ',$cat_titles);
+					break;
+
+					case 4:
+					$table_data[] = $incident->location->latitude;
+					break;
+
+					case 5:
+					$table_data[] = $incident->location->longitude;
+					break;
+
+					case 6:
+					$incident_id = $incident->id;
+					$custom_fields = customforms::get_custom_form_fields($incident_id, NULL, FALSE);
+					if ( ! empty($custom_fields))
+					{
+						foreach($custom_fields as $custom_field)
+						{
+							$table_data[] = $custom_field['field_response'];
+						}
+					}
+					else
+					{
+						foreach ($custom_forms as $custom)
+						{
+							$table_data[] = '';
+						}
+					}
+					break;
+
+					case 7:
+					$incident_person = $incident->incident_person;
+					if($incident_person->loaded)
+					{
+						$table_data[] = $incident_person->person_first;
+						$table_data[] = $incident_person->person_last;
+						$table_data[] = $incident_person->person_email;
+					}
+					else
+					{
+						$table_data[] = '';
+						$table_data[] = '';
+						$table_data[] = '';
+					}
+					break;
+				}
+			}
+
+			$table_data[] = $incident->incident_active ? 'YES' : 'NO';
+			$table_data[] = $incident->incident_verified ? 'YES' : 'NO';
+			
+
+			// Incase a plugin would like to add some custom data for an incident
+			$event_data = array("table_data" => $table_data, "incident" => $incident);
+			Event::run('ushahidi_filter.report_download_html_incident', $event_data);
+			$table_data = $event_data['table_data'];
+
+			$h[] = '        <tr>';
+
+			foreach ($table_data as $data)
+			{
+				$h[] = '          <td>';
+				$h[] = '            '.$data;
+				$h[] = '          </td>';
+			}
+
+			$h[] = '        </tr>';
+		}
+
+		$h[] = '      </tbody>';
+		$h[] = '    </table>';
+		$h[] = '  </body>';
+		$h[] = '</html>';
+
+		return implode("\n", $h);
 	}
 
 	/**

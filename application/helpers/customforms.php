@@ -25,6 +25,18 @@ class customforms_Core {
 	}
 
 	/**
+	 * JP: Retrieve a single custom form by ID.
+	 * @param int form_id The unique form_id.
+	 * @return ORM
+	 */
+	public static function get_custom_form($form_id)
+	{
+		return ORM::factory('form')
+				->where('id', $form_id)
+				->find();
+	}
+
+	/**
 	 * Retrieve Custom Form Fields
 	 * @param bool|int $incident_id The unique incident_id of the original report
 	 * @param int $form_id The unique form_id. If none selected, retrieve custom form fields from ALL custom forms
@@ -93,10 +105,12 @@ class customforms_Core {
 			else
 			{
 				// Return Field Structure
+				// JP: added field description
 				$fields_array[$custom_formfield->id] = array(
 					'field_id' => $custom_formfield->id,
 					'form_id' => $custom_formfield->form_id,
 					'field_name' => $custom_formfield->field_name,
+					'field_description' => $custom_formfield->field_description,
 					'field_type' => $custom_formfield->field_type,
 					'field_default' => $custom_formfield->field_default,
 					'field_required' => $custom_formfield->field_required,
