@@ -58,12 +58,27 @@ function showForm(id)
 	}
 }
 
-// Toggle Add New Field
+// JP: Toggle Add New Field (and hide Advanced Settings if visible)
 function addNewForm(id)
 {
 	if (id) {
+		if ($('#' + 'advanced_' + id).is(':visible')) {
+			$('#' + 'advanced_' + id).hide();
+		}
 		showForm('formadd_' + id);
 		showFormSelected('1',id,'',false);
+	}
+}
+
+// JP: Toggle Advanced Settings (and hide Add New Field if visible)
+function advancedForm(id)
+{
+	if (id) {
+		if ($('#' + 'formadd_' + id).is(':visible')) {
+			$('#' + 'formadd_' + id).hide();
+		}
+		showForm('advanced_' + id);
+		showFormAdvanced(id);
 	}
 }
 
@@ -85,6 +100,24 @@ function showFormSelected(id, form_id, field_id, select_disable)
 				}
 		  	}, "json");
 	};	
+}
+
+// JP: Ajax call to display the Advanced Settings form
+function showFormAdvanced(form_id)
+{
+	if (form_id) {
+		$('#advanced_form_result_' + form_id).html('');
+		$('#advanced_form_result_' + form_id).hide();
+		$('#advanced_form_fields_' + form_id).hide(300);
+		$.post("<?php echo url::site() . 'admin/manage/forms/advanced' ?>", { form_id: form_id },
+			function(data){
+				if (data.status == 'success'){
+					$('#advanced_form_fields_' + form_id).html('');
+					$('#advanced_form_fields_' + form_id).show(300);
+					$('#advanced_form_fields_' + form_id).html(data.message);
+				}
+			}, "json");
+	};
 }
 
 // Modify Individual Form Fields

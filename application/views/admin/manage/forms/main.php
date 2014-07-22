@@ -124,10 +124,12 @@
 									->find_all();
 
 								$form_fields = form::open(NULL, array('method' => 'get'));
+								// JP: added field description
 								foreach ($fields as $field)
 								{
 									$field_id = $field->id;
 									$field_name = $field->field_name;
+									$field_description = $field->field_description;
 									$field_default = $field->field_default;
 									$field_required = $field->field_required;
 									$field_width = $field->field_width;
@@ -184,8 +186,12 @@
 								<?php print form::close(); ?>
 								<tr style="margin:0;padding:0;border-width:0;">
 									<td colspan="4" style="margin:0;padding:0;border-width:0;">
+
+										<!-- JP: Added Advanced Settings (for editing default fields). -->
 										<div id="formDiv_<?php echo $form_id; ?>" class="forms_fields">
-											<a href="javascript:addNewForm('<?php echo $form_id; ?>')" class="new-form_field">Add New Field</a>
+											<a href="javascript:addNewForm('<?php echo $form_id; ?>')" class="new-form_field"><?php echo Kohana::lang('ui_admin.add_new_field'); ?></a><br>
+											<a href="javascript:advancedForm('<?php echo $form_id; ?>')" class="advanced-form_field"><?php echo Kohana::lang('ui_admin.advanced_settings'); ?></a>
+
 											<div id="formadd_<?php echo $form_id; ?>" class="forms_fields_add">
 												<div class="tab">
 													<div>
@@ -198,6 +204,19 @@
 													</div>		
 												</div>
 											</div>
+
+											<div id="advanced_<?php echo $form_id; ?>" class="forms_fields_advanced">
+												<div class="tab">
+													<div id="advanced_form_success_<?php echo $form_id; ?>" class="advanced-success-box"><?php echo Kohana::lang('ui_main.success'); ?></div>
+													<div>
+														<?php echo form::open(url::site() . 'admin/manage/forms/advanced_field_edit', array('id' => 'advanced_form_'.$form_id,
+																'name' => 'advanced_form_'.$form_id)); ?>
+															<div id="advanced_form_fields_<?php echo $form_id; ?>" class="forms_fields_advanced"></div>
+														<?php echo form::close(); ?>
+													</div>		
+												</div>
+											</div>
+
 											<div id="form_fields_current_<?php echo $form_id; ?>" class="forms_fields_current">
 												<?php echo $form_fields; ?>
 											</div>
