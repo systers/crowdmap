@@ -1,0 +1,69 @@
+/*
+Theme Name: Peace
+Description: Similar to the default theme, but streamlined to emphasize important features and to remove extra space.
+Demo: http://www.ushahidi.com
+Version: 1.0
+Author: Julia Proft
+Author Email: jproft@conncoll.edu
+*/
+
+
+/* General Wrapper Styles */
+
+div.wrapper, div.rapidxwpr {
+  margin: auto;
+  width: 960px; }
+
+
+/* General Header Nav Styles */
+
+div#header_nav-container {
+  background: #585858; 
+  clear: both;
+  width: auto; }
+
+div#header_nav, ul#header_nav_left, ul#header_nav_right {
+  background: #585858;
+  height: 50px;
+  padding: 0;
+  font-family: "Trebuchet MS", sans-serif; }
+
+div#header_nav {
+  white-space: nowrap;
+  border-bottom: none;
+  box-shadow: none; }
+
+
+/* Left Nav Styles */
+
+ul#header_nav_left a {
+  height: auto;
+  font-size: 20px;
+  line-height: 50px; }
+ul#header_nav_left img {
+  vertical-align: top;
+  padding: 7px 5px; }
+
+
+/* Right Nav Styles */
+
+ul#header_nav_right{
+  position: relative;
+  float: right; }
+ul#header_nav_right li.header_nav_user {
+  padding-right: 10px; }
+  ul#header_nav_right li.header_nav_user a {
+    height: auto;
+    font-size: 15px; 
+    line-height: 50px;
+    padding: 0 7px; }
+  ul#header_nav_right li.header_nav_user img {
+    vertical-align: middle;
+    padding: 0 4px 2px; }
+  ul#header_nav_right li.header_nav_user .header_nav_dropdown {
+    top: 50px;
+    right: 0;
+    margin-right: 9px; }
+  ul#header_nav_right li.header_nav_user .header_nav_dropdown li a {
+    line-height: 30px; }
+
