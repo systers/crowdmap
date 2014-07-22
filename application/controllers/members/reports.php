@@ -212,9 +212,10 @@ class Reports_Controller extends Members_Controller {
 		$this->template->content->title = Kohana::lang('ui_admin.create_report');
 
 		// Setup and initialize form field names
+		// JP: added additional form data for advanced settings
 		$form = array(
 			'location_id' => '',
-			'form_id' => '1',
+			'form_id' => '',
 			'locale' => '',
 			'incident_title' => '',
 			'incident_description' => '',
@@ -238,7 +239,8 @@ class Reports_Controller extends Members_Controller {
 			'custom_field' => array(),
 			'incident_zoom' => '',
 			'incident_source'=> '',
-			'incident_information' => ''
+			'incident_information' => '',
+			'form_data' => array()
 		);
 
 		// Copy the form as errors, so the errors will be stored with keys 
@@ -257,9 +259,24 @@ class Reports_Controller extends Members_Controller {
 		$form['incident_minute'] = date('i');
 		$form['incident_ampm'] = date('a');
 		
+		// JP: If we are editing an existing report, given by $id,
+		// we need to make sure we are using the correct form id.
+		// Otherwise, we use the id of the default report (1).
+		if ($id and Incident_Model::is_valid_incident($id, FALSE))
+		{
+			$form['form_id'] = ORM::factory('incident', $id)->form_id;	
+		}
+		else
+		{
+			$form['form_id'] = 1;
+		}
+
 		// Initialize custom field array
 		$form_id = $form['form_id'];
 		$form['custom_field'] = customforms::get_custom_form_fields($id, $form_id, TRUE);
+
+		// JP: Grab additional form information for advanced settings.
+		$form['form_data'] = customforms::get_custom_form($form_id);
 
 		// Locale (Language) Array
 		$this->template->content->locale_array = Kohana::config('locale.all_languages');
@@ -307,6 +324,14 @@ class Reports_Controller extends Members_Controller {
 		{
 			// Instantiate Validation, use $post, so we don't overwrite $_POST fields with our own things
 			$post = array_merge($_POST,$_FILES);
+
+			// JP: Make sure we are using the correct form ID so that the page does not revert to the default form if it is reloaded.
+			$form_id = $post['form_id'];
+
+			// JP: Ensure that the advanced settings are correct.
+			$form['form_data'] = customforms::get_custom_form($form_id);
+			// JP: Add the description_active boolean to our post data so the appropriate validation rules can be added
+			$post['description_active'] = $form['form_data']->description_active;
 			
 			if (reports::validate($post))
 			{
@@ -358,6 +383,17 @@ class Reports_Controller extends Members_Controller {
 
 				// Populate the error fields, if any
 				$errors = arr::overwrite($errors, $post->errors('report'));
+
+				// JP: replace default Report Title and Description names with custom names in the error listing.
+				if ($errors['incident_title'] AND !empty($form['form_data']->report_title_name))
+				{
+					$errors['incident_title'] = str_replace(Kohana::lang('ui_main.reports_title'), $form['form_data']->report_title_name, $errors['incident_title']);
+				}
+				if ($errors['incident_description'] AND !empty($form['form_data']->description_name))
+				{
+					$errors['incident_description'] = str_replace(Kohana::lang('ui_main.reports_description'), $form['form_data']->description_name, $errors['incident_description']);
+				}
+
 				$form_error = TRUE;
 			}
 		}
@@ -623,6 +659,7 @@ class Reports_Controller extends Members_Controller {
 
 	/**
 	 * Ajax call to update Incident Reporting Form
+	 * JP: added field description
 	 */
 	public function switch_form()
 	{
@@ -641,6 +678,7 @@ class Reports_Controller extends Members_Controller {
 			$fields_array[$custom_formfield->id] = array(
 				'field_id' => $custom_formfield->id,
 				'field_name' => $custom_formfield->field_name,
+				'field_description' => $custom_formfield->field_description,
 				'field_type' => $custom_formfield->field_type,
 				'field_required' => $custom_formfield->field_required,
 				'field_maxlength' => $custom_formfield->field_maxlength,
