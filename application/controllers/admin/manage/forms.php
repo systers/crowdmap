@@ -239,6 +239,7 @@ class Forms_Controller extends Admin_Controller {
 	
 	/**
 	 * Create/Edit & Save New Form Field
+	 * JP: Added field description.
 	 */
 	public function field_add()
 	{
@@ -250,8 +251,9 @@ class Forms_Controller extends Admin_Controller {
 	    (
 			'field_type' => '',
 			'field_name' => '',
-	        'field_default' => '',
-	        'field_required' => '',
+			'field_description' => '',
+			'field_default' => '',
+			'field_required' => '',
 			'field_width' => '',
 			'field_height' => ''
 	    );
@@ -264,7 +266,7 @@ class Forms_Controller extends Admin_Controller {
 		if ($_POST) 
 		{
 			// @todo Manually extract the data to be validated
-			$form_field_data = arr::extract($_POST, 'form_id', 'field_id', 'field_type', 'field_name', 'field_default', 'field_required', 
+			$form_field_data = arr::extract($_POST, 'form_id', 'field_id', 'field_type', 'field_name', 'field_description', 'field_default', 'field_required', 
 				'field_width', 'field_height', 'field_isdate', 'field_ispublic_visible', 'field_ispublic_submit');
 			
 			// Sanitize the default value (if provided)
@@ -347,8 +349,94 @@ class Forms_Controller extends Admin_Controller {
 		
 		echo json_encode(array("status"=>$field_add_status, "response"=>$field_add_response));
 	}
-	
-	
+
+	/**
+	 * JP: Edit & Save Advanced Form Field
+	 */
+	public function advanced_field_edit()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		// setup and initialize form field names
+		$form = array
+	    (
+			'report_title_name' => '',
+			'description_name' => '',
+              		'description_active' => '',
+	    );
+		//  copy the form as errors, so the errors will be stored with keys corresponding to the form field names
+	    $errors = $form;
+		
+		$advanced_edit_status = "";
+		$advanced_edit_response = "";
+		
+		if ($_POST) 
+		{
+			// @todo Manually extract the data to be validated
+			$form_data = arr::extract($_POST, 'advanced_form_id', 'advanced_form_title', 'advanced_form_description', 'advanced_form_active', 'report_title_name', 'description_name', 'description_active');
+			// Form Model instance
+			$custom_form = Form_Model::is_valid_form($_POST['advanced_form_id'])
+				? ORM::factory('form', $_POST['advanced_form_id'])
+				: new Form_Model();
+			// Validate the form data
+			if ($custom_form->validate(Validation::factory($form_data)))
+			{
+				// Validation succeeded, proceed...
+
+				// Save the new or modified entries
+
+				// JP: The Report Title and Description fields are saved as null in the database if they match the default names or are empty.
+
+				if (strcmp(trim($form_data['report_title_name']), Kohana::lang('ui_main.reports_title')) === 0 OR empty(trim($form_data['report_title_name'])))
+				{
+					$custom_form->report_title_name = null;
+				}
+				else
+				{
+					$custom_form->report_title_name = trim($form_data['report_title_name']);
+				}
+
+				if (strcmp(trim($form_data['description_name']), Kohana::lang('ui_main.reports_description')) === 0 OR empty(trim($form_data['description_name'])))
+				{
+					$custom_form->description_name = null;
+				}
+				else
+				{
+					$custom_form->description_name = trim($form_data['description_name']);
+				}
+
+				$custom_form->description_active = $form_data['description_active'];
+				$custom_form->save();
+				
+				$advanced_edit_status = "success";
+				$advanced_edit_response = rawurlencode(customforms::get_current_fields($custom_form->id, $this->user));
+				
+			}
+			else
+			{
+				// Repopulate the form fields
+				$form = arr::overwrite($form, $form_data->as_array());
+
+				// Populate the error fields, if any
+				$errors = arr::overwrite($errors, $form_data->errors('form'));
+                
+				// populate the response to this post request
+				$advanced_edit_status = "error";
+				$advanced_edit_response  = "";
+				$advanced_edit_response .= "<ul>";
+				
+				foreach ($errors as $error_item => $error_description)
+				{
+					$advanced_edit_response .= (!$error_description) ? '' : "<li>" . $error_description . "</li>";
+				}
+				$advanced_edit_response .= "</ul>";
+			}
+		}
+		
+		echo json_encode(array("status"=>$advanced_edit_status, "response"=>$advanced_edit_response));
+	}
+		
 	/**
 	* Delete Form Field
     */
@@ -486,6 +574,7 @@ class Forms_Controller extends Admin_Controller {
     * @param int $form_id The id no. of the form
     * @param int $field_id The id no. of the field
 	* @param string $type "start" for start of a div "end" for the end
+	* JP: Added field description.
     */
 	private function _get_selector_div($form_id = 0, $field_id = 0, $type = "")
 	{
@@ -502,6 +591,7 @@ class Forms_Controller extends Admin_Controller {
 			if ($field->loaded == true)
 			{
 				$field_name = $field->field_name;
+				$field_description = $field->field_description;
 				$field_default = $field->field_default;
 				$field_required = $field->field_required;
 				$field_width = $field->field_width;
@@ -516,6 +606,7 @@ class Forms_Controller extends Admin_Controller {
 		{
 			$field_id = "";
 			$field_name = "";
+			$field_description = "";
 			$field_default = "";
 			$field_required = "0";
 			$field_width = "";
@@ -542,6 +633,7 @@ class Forms_Controller extends Admin_Controller {
 			$html .="</div>"; 
 		}else{
 			$html .="<input type=\"hidden\" name=\"field_name\" id=\"field_name\" value=\"BLANKDIV-".$increment."\">";
+			$html .="<input type=\"hidden\" name=\"field_description\" id=\"field_description\" value=\"BLANKDIV-".$increment."\">";
 			$html .="<input type=\"hidden\" name=\"field_default\" id=\"field_default\" value=\"BLANKDIV-".$increment."\">";
 		}
 		$html .="<input type=\"hidden\" name=\"field_required\" id=\"field_required\" value=\"FALSE\">";
@@ -578,6 +670,7 @@ class Forms_Controller extends Admin_Controller {
 	* Generate Text Field Entry Form
     * @param int $form_id The id no. of the form
     * @param int $field_id The id no. of the field
+	* JP: Added field description.
     */
 	private function _get_selector_text($form_id = 0, $field_id = 0)
 	{
@@ -587,6 +680,7 @@ class Forms_Controller extends Admin_Controller {
 			if ($field->loaded == true)
 			{
 				$field_name = $field->field_name;
+				$field_description = $field->field_description;
 				$field_default = $field->field_default;
 				$field_required = $field->field_required;
 				$field_width = $field->field_width;
@@ -601,6 +695,7 @@ class Forms_Controller extends Admin_Controller {
 		{
 			$field_id = "";
 			$field_name = "";
+			$field_description ="";
 			$field_default = "";
 			$field_required = "0";
 			$field_width = "";
@@ -618,6 +713,10 @@ class Forms_Controller extends Admin_Controller {
 		$html .="<div class=\"forms_item\">"; 
 		$html .="	<strong>".Kohana::lang('ui_admin.field_name').":</strong><br />"; 
 		$html .= 	form::input('field_name', $field_name, ' class="text"');
+		$html .="</div>";
+		$html .="<div class=\"forms_item\">";
+		$html .="	<strong>".Kohana::lang('ui_admin.description').":</strong><br />";
+		$html .=	form::input('field_description', $field_description, ' class="text"');
 		$html .="</div>"; 
 		$html .="<div class=\"forms_item\">"; 
 		$html .="	<strong>".Kohana::lang('ui_admin.field_default').":</strong><br />"; 
@@ -691,6 +790,7 @@ class Forms_Controller extends Admin_Controller {
 	* Generate TextArea Field Entry Form
     * @param int $form_id The id no. of the form
     * @param int $field_id The id no. of the field
+	* JP: Added field description.
     */
 	private function _get_selector_textarea($form_id = 0, $field_id = 0)
 	{
@@ -700,6 +800,7 @@ class Forms_Controller extends Admin_Controller {
 			if ($field->loaded == true)
 			{
 				$field_name = $field->field_name;
+				$field_description = $field->field_description;
 				$field_default = $field->field_default;
 				$field_required = $field->field_required;
 				$field_width = $field->field_width;
@@ -714,6 +815,7 @@ class Forms_Controller extends Admin_Controller {
 		{
 			$field_id = "";
 			$field_name = "";
+			$field_description ="";
 			$field_default = "";
 			$field_required = "0";
 			$field_width = "";
@@ -734,6 +836,10 @@ class Forms_Controller extends Admin_Controller {
 		$html .="<div class=\"forms_item\">"; 
 		$html .="	<strong>".Kohana::lang('ui_admin.field_name').":</strong><br />"; 
 		$html .= 	form::input('field_name', $field_name, ' class="text"');
+		$html .="</div>";
+		$html .="<div class=\"forms_item\">";
+		$html .="	<strong>".Kohana::lang('ui_admin.description').":</strong><br />";
+		$html .=	form::input('field_description', $field_description, ' class="text"');
 		$html .="</div>"; 
 		$html .="<div class=\"forms_item\">"; 
 		$html .="	<strong>".Kohana::lang('ui_admin.field_default').":</strong><br />"; 
@@ -807,6 +913,7 @@ class Forms_Controller extends Admin_Controller {
 	* Generate Date Field Entry Form
     * @param int $form_id The id no. of the form
     * @param int $field_id The id no. of the field
+	* JP: Added field description.
     */
 	private function _get_selector_date($form_id = 0, $field_id = 0)
 	{
@@ -816,6 +923,7 @@ class Forms_Controller extends Admin_Controller {
 			if ($field->loaded == TRUE)
 			{
 				$field_name = $field->field_name;
+				$field_description = $field->field_description;
 				$field_default = $field->field_default;
 				$field_required = $field->field_required;
 				$field_width = $field->field_width;
@@ -830,6 +938,7 @@ class Forms_Controller extends Admin_Controller {
 		{
 			$field_id = "";
 			$field_name = "";
+			$field_description = "";
 			$field_default = "";
 			$field_required = "0";
 			$field_width = "";
@@ -847,6 +956,10 @@ class Forms_Controller extends Admin_Controller {
 		$html .="<div class=\"forms_item\">"; 
 		$html .="	<strong>".Kohana::lang('ui_admin.field_name').":</strong><br />"; 
 		$html .= 	form::input('field_name', $field_name, ' class="text"');
+		$html .="</div>";
+		$html .="<div class=\"forms_item\">";
+		$html .="	<strong>".Kohana::lang('ui_admin.description').":</strong><br />";
+		$html .=	form::input('field_description', $field_description, ' class="text"');
 		$html .="</div>"; 
 		$html .="<div class=\"forms_item\">"; 
 		$html .="	<strong>".Kohana::lang('ui_admin.field_default').":</strong><br />"; 
@@ -885,6 +998,7 @@ class Forms_Controller extends Admin_Controller {
     * @param int $form_id The id no. of the form
     * @param int $field_id The id no. of the field
     * @param int $type 5=radio, 6=checkbox, 7=dropdown
+	* JP: Added field description.
     */
 	private function _get_selector_multi($form_id = 0, $field_id = 0, $type="")
 	{
@@ -894,6 +1008,7 @@ class Forms_Controller extends Admin_Controller {
 			if ($field->loaded == true)
 			{
 				$field_name = $field->field_name;
+				$field_description = $field->field_description;
 				$field_default = $field->field_default;
 				$field_required = $field->field_required;
 				$field_ispublic_visible = $field->field_ispublic_visible;
@@ -904,6 +1019,7 @@ class Forms_Controller extends Admin_Controller {
 		{
 			$field_id = "";
 			$field_name = "";
+			$field_description = "";
 			$field_default = "";
 			$field_required = "0";
 			$field_ispublic_visible = "0";
@@ -924,8 +1040,12 @@ class Forms_Controller extends Admin_Controller {
 			. "<div class=\"forms_item\">"
 			. "		<strong>".Kohana::lang('ui_admin.field_name').":</strong><br />" 
 			.		form::input('field_name', $field_name, ' class="text"')
-			. "</div>" 
+			. "</div>"
 			. "<div class=\"forms_item\">" 
+			. "		<strong>".Kohana::lang('ui_admin.description').":</strong><br />"
+			.		form::input('field_description', $field_description, ' class="text"')
+			. "</div>"
+			. "<div class=\"forms_item\">"
 			. "		<strong>".$values_prompt.":<a href=\"#\" class=\"tooltip\""
 			. "		title=\"".$tooltip."\"></a><br />" 
 			.		form::textarea('field_default', $field_default, ' class="text"')
@@ -954,6 +1074,96 @@ class Forms_Controller extends Admin_Controller {
 		$html .=$this->_get_selector_js($form_id);
 		
 		return $html;
+	}
+
+	/**
+	* JP: Gets the Advanced Settings Form
+	*/
+	public function advanced()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		$form_id = (isset($_POST['form_id'])) ? intval($_POST['form_id']) : 0;
+		$form_content = ($form_id > 0) ? $this->_get_advanced_settings($form_id) : "";
+		echo json_encode(array("status"=>"success", "message"=>$form_content));
+	}
+
+	/**
+	* JP: Generate Advanced Settings Form
+	* @param int $form_id The id no. of the form
+	*/
+	private function _get_advanced_settings($form_id = 0)
+	{
+		if (intval($form_id) > 0)
+		{
+			$form = ORM::factory('form', $form_id);
+			if ($form->loaded == TRUE)
+			{
+				$form_title = $form->form_title;
+				$form_description = $form->form_description;
+				$form_active = $form->form_active;
+				$report_title_name = $form->report_title_name;
+				$description_name = $form->description_name;
+				$description_active = $form->description_active;
+				
+				if (empty($report_title_name))
+				{
+					$report_title_name = Kohana::lang('ui_main.report_title');
+				}
+				if (empty($description_name))
+				{
+					$description_name = Kohana::lang('ui_main.description');
+				}
+			}
+		}
+		else
+		{
+			$form_id = "";
+			$form_title = "";
+			$form_description = "";
+			$form_active = "0";
+			$report_title_name = "";
+			$description_name = "";
+			$description_active = "0";
+		} 
+		
+		$html = "";
+		$html .="<input type=\"hidden\" name=\"advanced_form_id\" id=\"advanced_form_id\" value=\"".$form_id."\">";
+		$html .="<input type=\"hidden\" name=\"advanced_form_title\" id=\"advanced_form_title\" value=\"".$form_title."\">";
+		$html .="<input type=\"hidden\" name=\"advanced_form_description\" id=\"advanced_form_description\" value=\"".$form_description."\">";
+		$html .="<input type=\"hidden\" name=\" advanced_form_active\" id=\"advanced_form_active\" value=\"".$form_active."\">";
+		$html .="<div id=\"advanced_form_result_".$form_id."\" class=\"advanced_forms_fields_result\"></div>";
+		$html .="<div class=\"advanced_forms_item\">"; 
+		$html .="	<strong>".Kohana::lang('ui_admin.name_for_report_title').":</strong><br />"; 
+		$html .= 	form::input('report_title_name', $report_title_name, ' class="text"');
+		$html .="</div>";
+		$html .="<div class=\"advanced_forms_item\">";
+		$html .="	<strong>".Kohana::lang('ui_admin.name_for_description').":</strong><br />";
+		$html .=	form::input('description_name', $description_name, ' class="text"');
+		$html .="</div>";  
+		$html .="<div class=\"advanced_forms_item\">"; 
+		$html .="	<strong>".Kohana::lang('ui_admin.description_field_active')."?</strong><br />";
+		if ($description_active != 1)
+		{
+			$html .= 	Kohana::lang('ui_admin.yes')." " . form::radio('description_active', '1', FALSE) . "&nbsp;&nbsp;";
+			$html .= 	Kohana::lang('ui_admin.no')." " . form::radio('description_active', '0', TRUE);
+		}
+		else
+		{
+			$html .= 	Kohana::lang('ui_admin.yes')." " . form::radio('description_active', '1', TRUE) . "&nbsp;&nbsp;";
+			$html .= 	Kohana::lang('ui_admin.no')." " . form::radio('description_active', '0', FALSE);
+		}
+		$html .="</div>";
+		
+		$html .="<div style=\"clear:both;\"></div>";
+		$html .="<div class=\"advanced_forms_item\">";
+		$html .="	<div id=\"advanced_form_loading_".$form_id."\" class=\"advanced_forms_fields_loading\"></div>";
+		$html .="<input type=\"submit\" class=\"save-rep-btn\" value=\"".Kohana::lang('ui_main.save')."\" />";
+		$html .="</div>";
+		$html .="<div style=\"clear:both;\"></div>";
+		$html .=$this->_get_advanced_settings_js($form_id);
+		
+		return $html;	
 	}
 
 	/** 
@@ -1003,6 +1213,48 @@ class Forms_Controller extends Admin_Controller {
 		$html .="};";
 		$html .="$(\"#form_field_".$form_id."\").ajaxForm(options);";
 		$html .="$(\"#form_field_".$form_id."\").submit(function() {";
+		$html .="return false;";
+		$html .="});";		
+		$html .="});";
+		$html .="</script>";
+		
+		return $html;
+	}
+
+	/**
+	* JP: Generate Advanced Settings Form Javascript For Ajax Requests
+    	* @param int $form_id The id no. of the form
+    	*/
+	private function _get_advanced_settings_js($form_id = 0)
+	{
+		$html = "";
+		$html .="<script type=\"text/javascript\" charset=\"utf-8\">";
+		$html .="$(document).ready(function(){";
+		$html .="i=0;";
+		$html .="var options = { ";
+		$html .="    dataType:   'json',";
+		$html .="    beforeSubmit:    function() { ";
+		$html .="        $('#advanced_form_loading_".$form_id."').html('<img src=\"".url::base()."media/img/loading_g.gif\">');";
+		$html .="    }, ";
+		$html .="    success:    function(data) { ";
+		$html .="        $('#advanced_form_loading_".$form_id."').html(''); ";
+		$html .="        if(data.status != 'success'){";
+		$html .="        	$('#advanced_form_result_".$form_id."').removeClass(\"advanced_forms_fields_result\").addClass(\"advanced_forms_fields_result_error\");";
+		$html .="        	$('#advanced_form_result_".$form_id."').html(data.response);";
+		$html .="        	$('#advanced_form_result_".$form_id."').show(); ";
+		$html .="        } else { ";
+		$html .="        	$('#advanced_form_result_".$form_id."').removeClass(\"advanced_forms_fields_result_error\").addClass(\"advanced_forms_fields_result\");";
+		$html .="		$('#advanced_form_success_".$form_id."').fadeIn();";
+		$html .="		setTimeout(function() { ";
+		$html .="        		$('#advanced_".$form_id."').hide(300);";
+		$html .="        		$('#advanced_form_fields_".$form_id."').hide();";
+		$html .="			$('#advanced_form_success_".$form_id."').hide();";
+		$html .="		}, 3000);";
+		$html .="        };";
+		$html .="    } ";
+		$html .="};";
+		$html .="$(\"#advanced_form_".$form_id."\").ajaxForm(options);";
+		$html .="$(\"#advanced_form_".$form_id."\").submit(function() {";
 		$html .="return false;";
 		$html .="});";		
 		$html .="});";

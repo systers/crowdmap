@@ -40,6 +40,8 @@ class Form_Field_Model extends ORM {
 	 * @param array $array Values to check
 	 * @param bool $save Save the record when validation suceeds
 	 * @return bool
+	 *
+	 * JP: Added field description and field default validation rules.
 	 */
 	public function validate(array & $array, $save = FALSE)
 	{
@@ -49,6 +51,8 @@ class Form_Field_Model extends ORM {
 					->add_rules('form_id','required', 'numeric', array('Form_Model', 'is_valid_form'))
 					->add_rules('field_type','required', 'numeric')
 					->add_rules('field_name','required', 'length[1,1000]')
+					->add_rules('field_description', 'length[1,1000]')
+					->add_rules('field_default', 'standard_text')
 					->add_rules('field_required','required', 'between[0,1]')
 					->add_rules('field_ispublic_visible','required', 'numeric')
 					->add_rules('field_ispublic_submit','required', 'numeric');
