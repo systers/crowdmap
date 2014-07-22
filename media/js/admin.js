@@ -24,3 +24,15 @@
 		$("a.add").focus();
 	}
 })(jQuery);
+
+// JP: Bind a keyup event to our custom text areas 
+// so that they automatically grow and shrink to fit 
+// the input of user, enhancing text visibility.
+$(document).ready(function() {
+	var customTextAreas = $('.textarea.custom_text');
+	    customTextAreas.css('overflow', 'hidden');
+	    customTextAreas.on('keyup', function() {
+		    this.style.height = '50px';
+		    this.style.height = this.scrollHeight + 'px';
+	    });
+});

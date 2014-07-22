@@ -710,6 +710,8 @@
 	 * This method updates the set of parameters used to filter out
 	 * the map content and then redraws the map
 	 *
+	 * JP: Added additional filter: search query.
+	 *
 	 * Parameters:
 	 * filters - {Object} Set of filter to apply to the map.
 	 * Allowable filters are:
@@ -718,6 +720,7 @@
 	 *     m - {Number} The media type (0 - All, 1 - Pictures, 2 - Video 4 - News)
 	 *     s - {Number} Start date - Earliest date by which to filter the reports
 	 *     e - {Number} End date - Latest date by which to filter the reports
+	 *     q - {String} Filter the reports based on search query.
 	 */
 	Ushahidi.Map.prototype.updateReportFilters = function(filters) {
 		if (filters == undefined) {

@@ -652,6 +652,17 @@ ul.tabset li.right {
 	font-size:14px;
 	color:#555;
 }
+/* JP: Added advanced settings success box. */
+.advanced-success-box{
+	margin:0;
+	padding: 10px;
+	background:#d8f1d8;
+	border:2px solid #a7d1a7;
+	width:auto;
+	clear:both;
+	overflow:hidden;
+	display:none;
+}
 a.hide {
 	font-weight:normal;
 	font-size:11px;
@@ -895,6 +906,10 @@ ul.pager li a.active {background:#f2f7fa;}
 	width:363px;
 	padding:10px 5px;
 }
+/* JP: Added width to description text area for consistency. */
+div#description_row textarea {
+	width: 363px;
+}
 div.custom_div {
 	width: 100%;
     padding: 5px;
@@ -909,16 +924,18 @@ div.custom_div h2 {
     padding-left: 5px;
     background: #E8E8E8;
 }
+/* JP: Changed width for consistency. */
 .report-form input.custom_text {
-	width:363px;
+	width:90%;
 	margin-bottom: 10px;
 	float: none;
 }
+/* JP: Changed width and padding for consistency. */
 .report-form textarea{
-	width:368px;
+	width:90%;
 	height:260px;
 	margin:0;
-	padding:4px 0 4px 5px;
+	padding:4px 5px;
 	border:2px solid #d9d9d9;
 	float:left;
 }
@@ -941,7 +958,8 @@ div.custom_div h2 {
 	clear:both;
 	float:none;
 }
-.report-form h4{
+/* JP: Added name-text class for advanced settings. */
+.report-form h4, .report-form h4 .name-text{
 	font-weight:bold;
 	color:#404040;
 	font-size:15px;
@@ -1650,14 +1668,15 @@ table.p_replace td.special{
 }
 
 /*-- Forms --*/
-.forms_fields{
+/* JP: Added advanced form styles. */
+.forms_fields, .advanced_forms_fields{
 	display:none;
 	margin:0 20px 15px 20px;
 	padding:10px;
 	background-color:#eee;
 	border-bottom:2px solid #ccc;
 }
-.forms_fields_add{
+.forms_fields_add, .forms_fields_advanced{
 	display:none;
 	margin:10px 0 0 15px;
 }
@@ -1675,7 +1694,14 @@ a.new-form_field{
 	padding:1px 0 0 18px;
 	background:url(../img/icon-plus.gif) no-repeat 0 2px;
 }
-.forms_item{
+a.advanced-form_field{
+	text-decoration:underline;
+	font-size:11px;
+	font-weight:bold;
+	padding:1px 0 0 18px;
+	background:url(../img/icon-wrench.gif) no-repeat 0 2px;
+}
+.forms_item, .advanced_forms_item{
 	float:left;
 	margin:0 15px 10px 0;
 }
@@ -1690,11 +1716,11 @@ a.new-form_field{
 	padding-bottom:10px;
 	border-bottom:1px solid #ccc;
 }
-.forms_fields_loading{
+.forms_fields_loading, .advanced_forms_fields_loading{
 	float:left;
 	margin-right:15px;
 }
-.forms_fields_result{
+.forms_fields_result, .advanced_forms_fields_result{
 	display:none;
 	font-weight:bold;
 	background:#d8f1d8;
@@ -1702,7 +1728,7 @@ a.new-form_field{
 	padding:5px;
 	margin:0 0 10px 0;
 }
-.forms_fields_result_error{
+.forms_fields_result_error, .advanced_forms_fields_result_error{
 	display:none;
 	font-weight:bold;
 	background:#FFD8D9;
@@ -1710,7 +1736,7 @@ a.new-form_field{
 	padding:5px;
 	margin:0 0 10px 0;
 }
-.forms_fields_result ul, .forms_fields_result_error ul{
+.forms_fields_result ul, .forms_fields_result_error ul, .advanced_forms_fields_result_error ul{
 	margin:0;
 	padding:0;
 }
@@ -2639,3 +2665,13 @@ div.dp-popup td.disabled {
 	line-height: 12px;
 	color: #a1a1a1;
 }
+
+/* JP: Added style for field description. */
+.field-description {
+	font-weight: normal;
+	font-size: 12px;
+	line-height: 14px;
+	margin-bottom: 6px;
+	color: #666666;
+}
+
