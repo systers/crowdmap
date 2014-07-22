@@ -14,17 +14,23 @@
  * @license    http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License (LGPL) 
  */
 
+		// JP: Added changeMonth and changeYear API options.
+
 		$(document).ready(function() {
 			$("#from_date").datepicker({ 
 				showOn: "both", 
 				buttonImage: "<?php echo $calendar_img; ?>", 
-				buttonImageOnly: true 
+				buttonImageOnly: true,
+				changeMonth: true,
+				changeYear: true 
 			});
 			
 			$("#to_date").datepicker({ 
 				showOn: "both", 
 				buttonImage: "<?php echo $calendar_img; ?>", 
-				buttonImageOnly: true 
+				buttonImageOnly: true,
+				changeMonth: true,
+				changeYear: true
 			});
 			
 			
