@@ -333,6 +333,16 @@ class Themes_Core {
 		if ($this->admin)
 		{
 			$this->admin_requirements();
+
+			// JP: Add _global.css file, if found.
+
+			foreach(self::$theme_css as $css)
+			{
+				if (!strcmp(end(explode("/", $css)), "_global.css"))
+				{
+					Requirements::css($css);
+				}
+			}
 		}
 		
 		if ($this->frontend)
@@ -492,6 +502,24 @@ class Themes_Core {
 		$search .= "</div>";
 
 		return $search;
+	}
+
+	// JP: Added filter search.
+	public function filter_search()
+	{
+		$filter_search = "";
+		$filter_search .= "<div class=\"filter-search-form\">";
+		$filter_search .= "<span id=\"filter-search-title\">".Kohana::lang('ui_main.search')."</span>";
+		$filter_search .= form::open(NULL, array('method' => 'get', 'id' => 'filter_search'));
+		$filter_search .= "<ul>";
+		$filter_search .= "<li><input id=\"filter_search_query\" type=\"text\" name=\"q\" value=\"\" class=\"text\" /></li>";
+		$filter_search .= "<li><input type=\"submit\" class=\"searchbtn\" value=\"".Kohana::lang('ui_main.search')."\" /></li>";
+		$filter_search .= "</ul>";
+		$filter_search .= form::close();
+		$filter_search .= "<div id=\"filter-search-results-box\"><span id=\"filter-search-prompt\">".Kohana::lang('ui_main.filter_search_prompt')."</span></div>";
+		$filter_search .= "</div>";
+
+		return $filter_search;
 	}
 
 	public function submit_btn()
@@ -665,12 +693,14 @@ SCHEDULER;
 	{
 		$meta = self::$themes[$theme];
 		// Add special cases for old themes
+		// JP: Added special _global case
 		if (empty($meta['CSS']))
 		{
 			$meta['CSS'] = array();
 			$meta['CSS'][] = 'base';
 			$meta['CSS'][] = 'style';
 			$meta['CSS'][] = '_default';
+			$meta['CSS'][] = '_global';
 			$meta['CSS'][] = $theme;
 		}
 		else
