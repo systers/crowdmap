@@ -54,9 +54,11 @@
 		$("textarea[id^='custom_field_']").parent().remove();
 		  
 		// "Choose Date Range"" Datepicker
+		// JP: Added changeYear API option.
 		var dates = $( "#report_date_from, #report_date_to" ).datepicker({
 			defaultDate: "+1w",
 			changeMonth: true,
+			changeYear: true,
 			numberOfMonths: 1,
 			dateFormat: "yy-mm-dd",
 			onSelect: function( selectedDate ) {

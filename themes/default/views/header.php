@@ -85,7 +85,8 @@
 				<!-- mainmenu -->
 				<div id="mainmenu" class="clearingfix">
 					<ul>
-						<?php nav::main_tabs($this_page); ?>
+						<!-- JP: Show or hide reports_submit tab, depending on settings. -->
+						<?php nav::main_tabs($this_page, (Kohana::config('settings.show_submit_report_tab') ? array() : array('reports_submit'))); ?>
 					</ul>
 
 					<?php if ($allow_feed == 1) { ?>

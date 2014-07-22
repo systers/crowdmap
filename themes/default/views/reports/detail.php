@@ -16,10 +16,16 @@
 		<h1 class="report-title"><?php
 			echo html::escape($incident_title);
 
-			// If Admin is Logged In - Allow For Edit Link
-			if ($logged_in)
+			// JP: If an admin is logged in, always allow for an admin edit link.
+			if ($admin_logged_in)
 			{
 				echo " [&nbsp;<a href=\"".url::site()."admin/reports/edit/".$incident_id."\">"
+				    .Kohana::lang('ui_main.edit')."</a>&nbsp;]";
+			}
+			// JP: If the author of the specific report is logged in, allow for a member edit link.
+			else if ($author_logged_in)
+			{
+				echo " [&nbsp;<a href=\"".url::site()."members/reports/edit/".$incident_id."\">"
 				    .Kohana::lang('ui_main.edit')."</a>&nbsp;]";
 			}
 		?></h1>
@@ -102,14 +108,20 @@
 
 		<!-- start report description -->
 		<div class="report-description-text">
-			<h5><?php echo Kohana::lang('ui_main.reports_description');?></h5>
-			<?php echo html::clean(nl2br($incident_description)); ?>
-			<br/>
+			<!-- JP: Only echo the description header and report description if one exists. -->
+			<?php if (!empty($incident_description)): ?>
+			<div class="report-text-media">
+				<h5><?php echo Kohana::lang('ui_main.reports_description');?></h5>
+				<?php echo html::clean(nl2br($incident_description)); ?>
+				<br/>
+			</div>
+			<?php endif; ?>
 
 
 			<!-- start news source link -->
 			<?php if( count($incident_news) > 0 ) { ?>
-			<div class="credibility">
+			<!-- JP: Changed credibility class to report-text-media. -->
+			<div class="report-text-media">
 			<h5><?php echo Kohana::lang('ui_main.reports_news');?></h5>
 					<?php
 						foreach( $incident_news as $incident_new)
@@ -127,7 +139,8 @@
 
 			<!-- start additional fields -->
 			<?php if(strlen($custom_forms) > 0) { ?>
-			<div class="credibility">
+			<!-- JP: Changed credibility class to report-text-media. -->
+			<div class="report-text-media">
 			<h5><?php echo Kohana::lang('ui_main.additional_data');?></h5>
 			<?php
 
