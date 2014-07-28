@@ -81,25 +81,22 @@ class Json_Controller extends Template_Controller {
 	 * @param string $type type of geojson to generate. Valid options are: 'clusters' and 'markers'
 	 **/
 	protected function geojson($type)
-	{
-		$color = Kohana::config('settings.default_map_all');
-		$icon = "";
-		$markers = FALSE;
-		
-		if (Kohana::config('settings.default_map_all_icon_id'))
-		{
-			$icon_object = ORM::factory('media')->find(Kohana::config('settings.default_map_all_icon_id'));
-			$icon = url::convert_uploaded_to_abs($icon_object->media_medium);
-		}
-		
+	{	
 		// Category ID
 		$category_id = (isset($_GET['c']) AND intval($_GET['c']) > 0) ? intval($_GET['c']) : 0;
 		// Get the category colour
 		if (Category_Model::is_valid_category($category_id))
 		{
 			// Get the color & icon
+			// if incident is inactive, set opacity to 3 
 			$cat = ORM::factory('category', $category_id);
-			$color = $cat->category_color;
+			$is_inactive = ORM::factory('incident')->where('incident_active', 0);
+                          if ($is_inactive === TRUE) {
+                                 $color = $cat->category_color('opacity', 4);
+                         } else 
+                                 $color = $cat->category_color;
+                         }
+
 			$icon = "";
 			if ($cat->category_image)
 			{
@@ -481,7 +478,8 @@ class Json_Controller extends Template_Controller {
 
 		// Load the incident
 		// @todo avoid the double load here
-		$marker = ORM::factory('incident')->where('incident.incident_active', 1)->with('location')->find($incident_id);
+		// we want to show both active and inactive incidents
+		$marker = ORM::factory('incident')->with('location')->find($incident_id);
 		if ( ! $marker->loaded )
 		{
 			throw new Kohana_404_Exception();
@@ -517,8 +515,6 @@ class Json_Controller extends Template_Controller {
 		    : "month";
 
 		// Get Category Info
-		$category_title = "All Categories";
-		$category_color = "#990000";
 		if ($category_id > 0)
 		{
 			$category = ORM::factory("category", $category_id);
