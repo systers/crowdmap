@@ -43,7 +43,10 @@ class customforms_Core {
                         . "WHERE ".$table_prefix."id <= 4 "
                         . "ORDER BY field_position ASC";
 
-                $db->query($sql)->$custom_reports_filter_fields;
+                foreach ($db->query($sql) as $custom_reports_filter_fields)
+                {
+                return $custom_reports_filter_fields;
+                }
 
                 return $custom_reports_filter_fields;
         }
