@@ -24,17 +24,28 @@ class customforms_Core {
 		return $custom_forms->find_all();
 	}
 
-	/**
-	 * Retrieve Custom Forms Fields for Reports filter
-	 */
-	public static function get_custom_reports_filter_fields()
+	 /**
+      * Retrieve Custom Forms Fields for Reports filter
+      */
+        public static function get_custom_reports_filter_fields()
         {
-                $custom_reports_filter_fields = ORM::factory('form_field')
-                ->where('field_name', '=', 'PCV NAME',
-                        'OR', 'field_name', '=', 'COUNTERPART NAME',
-                        'OR', 'field_name', '=', 'CONTACT PERSON',
-                        'OR', 'field_name', '=', 'DIRECTOR NAME')
-                ->find_all();
+                $custom_reports_filter_fields = array();  
+
+                // Database table prefix
+                $table_prefix = Kohana::config('database.default.table_prefix');
+
+                // Database instance
+                $db = new Database();
+
+                // Fetch custom_reports_filter_fields
+                $sql = "SELECT *"
+                        . "FROM ".$table_prefix."form_field "
+                        . "WHERE ".$table_prefix."id <= 4 "
+                        . "ORDER BY field_position ASC";
+
+                $db->query($sql)->$custom_reports_filter_fields;
+
+                return $custom_reports_filter_fields;
         }
 
 	/**

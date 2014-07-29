@@ -69,7 +69,7 @@ class Reports_Controller extends Main_Controller {
 		// Load the alert radius view
 		$alert_radius_view = new View('alerts/radius');
 		$alert_radius_view->show_usage_info = FALSE;
-		$alert_radius_view->enable_find_location = TRUE;
+		$alert_radius_view->enable_find_location = FALSE;
 		$alert_radius_view->css_class = "rb_location-radius";
 
 		$this->template->content->alert_radius_view = $alert_radius_view;
@@ -135,8 +135,7 @@ class Reports_Controller extends Main_Controller {
 		$this->template->content->category_tree_view = category::get_category_tree_view();
 
 		//Get Custom Fields needed for Reports Filter
-		//TODO: Why are custom fields not displayed in reports filter? Check sql query!
-        $this->template->content->custom_reports_filter_fields = customforms::get_custom_reports_filter_fields();
+		$this->template->content->custom_reports_filter_fields = customforms::get_custom_reports_filter_fields();
 
 		// Additional view content
 		$this->template->content->custom_forms_filter = new View('reports/submit_custom_forms');
