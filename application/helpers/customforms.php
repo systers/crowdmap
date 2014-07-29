@@ -24,6 +24,31 @@ class customforms_Core {
 		return $custom_forms->find_all();
 	}
 
+	 /**
+      * Retrieve Custom Forms Fields for Reports filter
+      */
+        public static function get_custom_reports_filter_fields()
+        {
+                $custom_reports_filter_fields = array();  
+
+                // Database table prefix
+                $table_prefix = Kohana::config('database.default.table_prefix');
+
+                // Database instance
+                $db = new Database();
+
+                // Fetch custom_reports_filter_fields
+                $sql = "SELECT *"
+                        . "FROM ".$table_prefix."form_field "
+                        . "WHERE ".$table_prefix."id <= 4 "
+                        . "ORDER BY field_position ASC";
+
+                foreach ($db->query($sql) as $custom_reports_filter_fields)
+                {
+                return $custom_reports_filter_fields;
+                }
+        }
+
 	/**
 	 * Retrieve Custom Form Fields
 	 * @param bool|int $incident_id The unique incident_id of the original report

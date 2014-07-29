@@ -186,16 +186,21 @@
 							<a class="f-title" href="#"><?php echo Kohana::lang('ui_main.custom_fields'); ?></a>
 						</h3>
 						<div class="f-customFields-box">
-							<?php echo $custom_forms_filter; ?>
-							
-						</div>
+
+							<div class="f-custom_fields-box">
+								<?php echo form::open(NULL, array('method' => 'get')); ?>
+                                <div class="report_row" id="custom_field_row_1"><h4>Keywords:</h4>
+                                    <input type="text" name="custom_field[1]" value="" id="custom_field_1" class="text custom_text" /> </div>
+										 <?php echo $custom_reports_filter_fields; ?>
+								<?php echo form::close(); ?>
+                             </div>
 						<?php
 							// Action, allows plugins to add custom filters
 							Event::run('ushahidi_action.report_filters_ui');
 						?>
-					</div>
+						</div>
 					<!-- end #accordion -->
-					
+					</div>
 					<div id="filter-controls">
 						<p>
 							<a href="#" class="small-link-button reset" id="reset_all_filters"><?php echo Kohana::lang('ui_main.reset_all_filters'); ?></a> 

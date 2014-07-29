@@ -29,9 +29,8 @@
 				controls: [],
 				projection: proj_900913,
 				'displayProjection': proj_4326,
-				maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34, 
-				                                 20037508.34, 20037508.34),
-				maxResolution: 156543.0339
+				maxExtent: new OpenLayers.Bounds(8, 44.5, 19, 50),
+                restrictedExtent: new OpenLayers.Bounds(8, 44.5, 19, 50)
 			};
 		}
 
@@ -47,7 +46,7 @@
 		if (typeof controls == "undefined" || controls == null) {
 			// Set the controls for the map options
 			map.addControls([
-				new OpenLayers.Control.Navigation({ dragPanOptions: { enableKinetic: true } }),
+				new OpenLayers.Control.Navigation( { 'zoomWheelEnabled': false }),
 				new OpenLayers.Control.Zoom(),
 				new OpenLayers.Control.Attribution(),
 				new OpenLayers.Control.MousePosition({
@@ -55,6 +54,7 @@
 				}),
 				new OpenLayers.Control.LayerSwitcher()
 			]);
+			map.zoomToMaxExtent(8, 44.5, 19, 50);
 		} else if (controls.length > 0) {
 			map.addControls(controls);
 		}
