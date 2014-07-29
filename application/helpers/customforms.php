@@ -47,8 +47,6 @@ class customforms_Core {
                 {
                 return $custom_reports_filter_fields;
                 }
-
-                return $custom_reports_filter_fields;
         }
 
 	/**
