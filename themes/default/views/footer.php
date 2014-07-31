@@ -40,12 +40,10 @@
 					</li>
 					<?php endif; ?>
 					
-					<?php if (Kohana::config('settings.allow_alerts')): ?>
 						<li>
-							<a href="<?php echo url::site()."alerts"; ?>">
-								<?php echo Kohana::lang('ui_main.alerts'); ?></a>
+							<a href="<?php echo url::site()."opportunities"; ?>">
+								<?php echo Kohana::lang('ui_main.opportunities'); ?></a>
 						</li>
-					<?php endif; ?>
 
 					<?php if (Kohana::config('settings.site_contact_page')): ?>
 					<li>
