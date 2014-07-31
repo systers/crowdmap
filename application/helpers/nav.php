@@ -58,16 +58,13 @@ class nav_Core {
 		}
 		
 		// Alerts
-		if(! in_array('alerts',$dontshow))
+		if(! in_array('opportunities',$dontshow))
 		{
-			if(Kohana::config('settings.allow_alerts'))
-			{
 				$menu_items[] = array( 
-					'page' => 'alerts',
-					'url' => url::site('alerts'),
-					'name' => Kohana::lang('ui_main.alerts')
+					'page' => 'opportunities',
+					'url' => url::site('opportunities'),
+					'name' => Kohana::lang('ui_main.opportunities')
 				);
-			}
 		}
 		
 		// Contacts
