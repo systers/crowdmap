@@ -1,7 +1,7 @@
 <div id="header_nav">
 	<div class="wrapper floatholder rapidxwpr">
 		<ul id="header_nav_left">
-			<li><a href="<?php echo url::site();?>"><img src="/themes/peace/images/header-logo.png" /><?php echo $site_name; ?></a></li>
+			<li><a href="<?php echo url::site();?>"><img src="<?php echo url::site();?>themes/peace/images/header-logo.png" /><?php echo $site_name; ?></a></li>
 			<?php
 			// Action::header_nav - Add items to header nav area
 			Event::run('ushahidi_action.header_nav');
