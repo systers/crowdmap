@@ -51,7 +51,25 @@
 				<!-- searchform -->
 				<?php echo $search; ?>
 				<!-- / searchform -->
-
+				
+				<!-- azerbaijani characters -->
+				<div class="az_char_search">
+                                <div class="az_char_table">
+                               	 <?php echo form::open("az_char"); ?>
+                                	<ul class="az_buttons">
+                                		<li class="az_buttons"><input type="button" id="az_char_search_buttons_e" value="ə" class="az_char_buttons"></li>
+                                		<li class="az_buttons"><input type="button" id="az_char_search_buttons_c" value="ç" class="az_char_buttons"></li>
+                                		<li class="az_buttons"><input type="button" id="az_char_search_buttons_g" value="ğ" class="az_char_buttons"></li>
+                                		<li class="az_buttons"><input type="button" id="az_char_search_buttons_i" value="ı" class="az_char_buttons"></li>
+                                		<li class="az_buttons"><input type="button" id="az_char_search_buttons_o" value="ö" class="az_char_buttons"></li>
+                                		<li class="az_buttons"><input type="button" id="az_char_search_buttons_u" value="ü" class="az_char_buttons"></li>
+                                		<li class="az_buttons"><input type="button" id="az_char_search_buttons_s" value="ş" class="az_char_buttons"></li>
+                                		<li class="az_buttons"><input type="button" id="az_char_search_buttons_w" value="w" class="az_char_buttons"></li>
+                                	</ul>
+                                <?php form::close(); ?>
+                                </div>
+                        </div>
+				<!-- / azerbaijani characters -->
 			</div>
 			<!-- / searchbox -->
 

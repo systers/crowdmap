@@ -206,7 +206,25 @@
 						<?php print form::input('location_find', '', ' title="'.Kohana::lang('ui_main.location_example').'" class="findtext"'); ?>
 						<input type="button" name="button" id="button" value="<?php echo Kohana::lang('ui_main.find_location'); ?>" class="btn_find" />
 						<div id="find_loading" class="report-find-loading"></div>
-						<div style="clear:both;" id="find_text"><?php echo Kohana::lang('ui_main.pinpoint_location'); ?>.</div>
+			 <!-- azerbaijani characters -->			
+			<div class="az_char_location_find">
+                		<div class="az_char_table">
+                		<?php echo form::open("az_char"); ?>
+                		<ul class="az_buttons">
+                		<li class="az_buttons"><input type="button" id="az_char_buttons_e" value="ə" class="az_char_buttons"></li>
+                		<li class="az_buttons"><input type="button" id="az_char_buttons_c" value="ç" class="az_char_buttons"></li>
+                		<li class="az_buttons"><input type="button" id="az_char_buttons_g" value="ğ" class="az_char_buttons"></li>
+                		<li class="az_buttons"><input type="button" id="az_char_buttons_i" value="ı" class="az_char_buttons"></li>
+                		<li class="az_buttons"><input type="button" id="az_char_buttons_o" value="ö" class="az_char_buttons"></li>
+                		<li class="az_buttons"><input type="button" id="az_char_buttons_u" value="ü" class="az_char_buttons"></li>
+                		<li class="az_buttons"><input type="button" id="az_char_buttons_s" value="ş" class="az_char_buttons"></li>
+                		<li class="az_buttons"><input type="button" id="az_char_buttons_w" value="w" class="az_char_buttons"></li>
+                		</ul>
+                		<?php form::close(); ?>
+                		</div>
+			</div>
+			 <!-- azerbaijani characters -->
+						<div style="clear:both;" id="find_text"><?php echo Kohana::lang('ui_main.pinpoint_location'); ?></div>
 					</div>
 				</div>
 				<?php Event::run('ushahidi_action.report_form_location', $id); ?>
