@@ -188,8 +188,8 @@
 						<div class="f-customFields-box">
 
 							<div class="f-custom_fields-box">
-                                <div class="report_row" id="custom_field_row_43"><h4>Keywords:</h4>
-                                    <input type="text" name="custom_field[43]" value="" id="custom_field_43" class="text custom_text" />
+                                <div class="report_row" id="custom_field_row_0"><h4><?php echo Kohana::lang('ui_main.keywords'); ?></h4>
+                                    <?php print form::input('custom_field_0', '', ' class="text custom_text"'); ?>
                                 </div>
 										 <?php echo $custom_forms_filter; ?>
                              </div>
