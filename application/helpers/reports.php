@@ -1011,7 +1011,7 @@ class reports_Core {
 				}
 				
 				$where_text .= "(form_field_id = ".intval($field_id)
-					. " AND form_response LIKE = '%".Database::instance()->escape_str(trim($field_value))."%')";
+					. " AND form_response LIKE '%".Database::instance()->escape_str(trim($field_value))."%')";
 			}
 			
 			// Make sure there was some valid input in there
