@@ -110,7 +110,8 @@ class reports_Core {
 		}
 		
 		// Validate photo uploads
-		$post->add_rules('incident_photo', 'upload::valid', 'upload::type[gif,jpg,png,jpeg]', 'upload::size[2M]');
+		$max_upload_size = Kohana::config('settings.max_upload_size');
+		$post->add_rules('incident_photo', 'upload::valid', 'upload::type[gif,jpg,png,jpeg]', "upload::size[".$max_upload_size."M]");
 
 
 		// Validate Personal Information
@@ -957,6 +958,33 @@ class reports_Core {
 			}
 		}
 		
+		//Search for Keyword in all Custom Form Fields
+                if (isset($_GET['custom_field_0']))
+                {
+                        $keyword = "";
+                        $db = new Database();
+
+                        $rows = $db->query('SELECT DISTINCT incident_id FROM ' .$table_prefix.'form_response WHERE form_response LIKE %'.$keyword.'%');
+
+                        if ($incident_ids != '')
+                        {
+                                foreach ($rows as $row)
+                                {
+                                        if ($incident_ids != '')
+                                        {
+                                                        $incident_ids .= ',';
+                                        }
+
+                                        $incident_ids .= $row->incident_id;
+                                }
+
+                         }
+                                //make sure there are IDs found
+                                if ($incident_ids != '')
+                                {
+                                        array_push(self::$params, 'i.id IN ('.$incident_ids.')');
+                                }
+                }
 		//
 		// Check if they're filtering over custom form fields
 		//
@@ -983,7 +1011,7 @@ class reports_Core {
 				}
 				
 				$where_text .= "(form_field_id = ".intval($field_id)
-					. " AND form_response = '".Database::instance()->escape_str(trim($field_value))."')";
+					. " AND form_response LIKE '%".Database::instance()->escape_str(trim($field_value))."%')";
 			}
 			
 			// Make sure there was some valid input in there
