@@ -16,6 +16,10 @@
 			Event::run('ushahidi_action.main_sidebar_pre_filters');
 			?>
 
+			<!-- JP: Enable or disable category filters, depending on settings. -->
+			<?php if (Kohana::config('settings.enable_category_filters')): ?>
+			<!-- JP: Enable or disable toggling of category filters visibility, depending on settings. -->
+			<?php if (Kohana::config('settings.enable_category_filters_showhide')): ?>
 			<!-- category filters -->
 			<div class="cat-filters clearingfix">
 				<strong>
@@ -27,6 +31,7 @@
 					</span>
 				</strong>
 			</div>
+			<?php endif; ?>
 
 			<ul id="category_switch" class="category-filters">
 				<?php
@@ -108,6 +113,7 @@
 					}
 				?>
 			</ul>
+			<?php endif; ?>
 			<!-- / category filters -->
 
 			<?php if ($layers): ?>
@@ -153,6 +159,8 @@
 
 			<br />
 
+			<!-- JP: Show or hide additional content containing reporting options, depending on settings. -->
+			<?php if (Kohana::config('settings.show_reporting_options')): ?>
 			<!-- additional content -->
 			<?php if (Kohana::config('settings.allow_reports')): ?>
 				<div class="additional-content">
@@ -214,6 +222,7 @@
 			<?php endif; ?>
 
 			<!-- / additional content -->
+			<?php endif; ?>
 			
 			<?php
 			// Action::main_sidebar - Add Items to the Entry Page Sidebar
@@ -227,6 +236,8 @@
 		<div id="content" class="clearingfix">
 			<div class="floatbox">
 
+				<!-- JP: Enable or disable media filters, depending on settings. -->
+				<?php if (Kohana::config('settings.enable_media_filters')): ?>
 				<!-- filters -->
 				<div class="filters clearingfix">
 					<div class="media-filters">
@@ -245,6 +256,7 @@
 					Event::run('ushahidi_action.map_main_filters');
 					?>
 				</div>
+				<?php endif; ?>
 				<!-- / filters -->
 
 				<?php								
@@ -252,6 +264,14 @@
 				echo $div_map;
 				echo $div_timeline;
 				?>
+
+				<!-- JP: Add filter search, if enabled. -->
+				<?php if (Kohana::config('settings.enable_filter_search')): ?>
+					<div id="filter-search-box">
+						<?php echo $filter_search; ?>
+					</div>
+				<?php endif; ?>
+
 			</div>
 		</div>
 		<!-- / content column -->

@@ -65,12 +65,19 @@
 	    <h1 class="report-title"><?php
   			echo $incident_title;
 
-  			// If Admin is Logged In - Allow For Edit Link
-  			if ($logged_in)
+  			// JP: If an admin is logged in, always allow for an admin edit link.
+  			if ($admin_logged_in)
   			{
-  				echo " [&nbsp;<a href=\"".url::site()."admin/reports/edit/".$incident_id."\">".Kohana::lang('ui_main.edit')."</a>&nbsp;]";
+  				echo " [&nbsp;<a href=\"".url::site()."admin/reports/edit/".$incident_id."\">"
+				    .Kohana::lang('ui_main.edit')."</a>&nbsp;]";
   			}
-  		?></h1>
+  			// JP: If the author of the specific report is logged in, allow for a member edit link.
+  			else if ($author_logged_in)
+  			{
+  				echo " [&nbsp;<a href=\"".url::site()."members/reports/edit/".$incident_id."\">"
+				    .Kohana::lang('ui_main.edit')."</a>&nbsp;]";
+  			}
+	    ?></h1>
   		
 	  	<!-- start report description -->
   		<div class="report-description-text">
@@ -80,7 +87,8 @@
 
 
   			<!-- start news source link -->
-  			<div class="credibility">
+  			<!-- JP: Changed credibility class to report-text-media. -->
+  			<div class="report-text-media">
   			<h5><?php echo Kohana::lang('ui_main.reports_news');?></h5>
   			<?php if( count($incident_news) > 0 ) { ?>
   					<?php
@@ -97,7 +105,8 @@
   			</div>
 
   			<!-- start additional fields -->
-  			<div class="credibility">
+  			<!-- JP: Changed credibility class to report-text-media. -->
+  			<div class="report-text-media">
   			<h5>Additional Information</a>
   			</h5>
   			<?php

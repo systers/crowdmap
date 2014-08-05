@@ -740,6 +740,9 @@
 			return false;
 		}
 		
+		/**
+		 * JP: Switches custom form fields and custom settings.
+		 */
 		function formSwitch(form_id, incident_id)
 		{
 			var answer = confirm('<?php echo Kohana::lang('ui_admin.are_you_sure_you_want_to_switch_forms'); ?>?');
@@ -748,8 +751,11 @@
 				$.post("<?php echo url::site().'reports/switch_form'; ?>", { form_id: form_id, incident_id: incident_id },
 					function(data){
 						if (data.status == 'success'){
+							$('#report_title_name').html((!data.response['report_title_name']) ? '<?php echo Kohana::lang('ui_main.reports_title'); ?>' : data.response['report_title_name']);
+							$('#description_name').html((!data.response['description_name']) ? '<?php echo Kohana::lang('ui_main.reports_description'); ?>' : data.response['description_name']);
+							((data.response['description_active']) ? $('#description_row').show() : $('#description_row').hide());
 							$('#custom_forms').html('');
-							$('#custom_forms').html(data.response);
+							$('#custom_forms').html(data.response['fields']);
 							$('#form_loader').html('');
 						}
 				  	}, "json");
@@ -949,3 +955,15 @@
 				}
 			});
 		}
+
+		// JP: Bind a keyup event to our custom text areas
+		// so that they automatically grow and shrink to fit
+		// the input of user, enhancing text visibility.
+		$(document).ready(function() {
+				var customTextAreas = $('.textarea.custom_text');
+				    customTextAreas.css('overflow', 'hidden');
+				    customTextAreas.on('keyup', function() {
+					    this.style.height = '50px';
+					    this.style.height = this.scrollHeight + 'px';
+				});
+		});

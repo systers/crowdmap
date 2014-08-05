@@ -644,6 +644,7 @@ CREATE TABLE IF NOT EXISTS `feed_item_category` (
 /**
  * Table structure for table `form`
  *
+ * JP: Added report_title_name, description_name, and description_active.
  */
 
 CREATE TABLE IF NOT EXISTS `form` (
@@ -651,6 +652,9 @@ CREATE TABLE IF NOT EXISTS `form` (
   `form_title` varchar(200) NOT NULL,
   `form_description` text,
   `form_active` tinyint(4) DEFAULT '1',
+  `report_title_name` varchar(200) DEFAULT NULL,
+  `description_name` varchar(200) DEFAULT NULL,
+  `description_active` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `form_title` (`form_title`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='Stores all report submission forms created(default+custom)' AUTO_INCREMENT=2 ;
@@ -667,12 +671,14 @@ INSERT INTO `form` (`id`, `form_title`, `form_description`, `form_active`) VALUE
 /**
  * Table structure for table `form_field`
  *
+ * JP: Added field_description.
  */
 
 CREATE TABLE IF NOT EXISTS `form_field` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `form_id` int(11) NOT NULL DEFAULT '1',
   `field_name` varchar(200) DEFAULT NULL,
+  `field_description` text DEFAULT '',
   `field_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '1 - TEXTFIELD, 2 - TEXTAREA (FREETEXT), 3 - DATE, 4 - PASSWORD, 5 - RADIO, 6 - CHECKBOX',
   `field_required` tinyint(4) DEFAULT '0',
   `field_position` tinyint(4) NOT NULL DEFAULT '0',
@@ -1335,6 +1341,13 @@ CREATE TABLE IF NOT EXISTS `settings` (
 
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
 
+/* JP: Added dashboard_redirect, enable_report_notifications, 
+ * enable_media_filters, enable_chronological_filter, 
+ * enable_category_filters, enable_category_filters_showhide, 
+ * show_reporting_options, show_submit_report_tab, and 
+ * enable_filter_search.
+ */
+
 INSERT INTO `settings` (`id`, `key`, `value`)
 VALUES
   (1,'site_name','Ushahidi'),
@@ -1401,12 +1414,22 @@ VALUES
   (63,'manually_approve_users','0'),
   (64,'enable_timeline','0'),
   (65,'feed_geolocation_user', ''),
-  (66,'allow_feed_category', '0');
+  (66,'allow_feed_category','0'),
+  (67,'dashboard_redirect','1'),
+  (68,'enable_report_notifications','0'),
+  (69,'enable_media_filters','1'),
+  (70,'enable_chronological_filter','1'),
+  (71,'enable_category_filters','1'),
+  (72,'enable_category_filters_showhide','1'),
+  (73,'show_reporting_options','1'),
+  (74,'show_submit_report_tab','1'),
+  (75,'enable_filter_search','0');
 -- --------------------------------------------------------
 
 /**
  * Table structure for table `users`
  *
+ * JP: Added report_notifications and last_reports_view.
  */
 
 CREATE TABLE IF NOT EXISTS `users` (
@@ -1426,6 +1449,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `public_profile` tinyint(1) NOT NULL DEFAULT '1',
   `approved` tinyint(1) NOT NULL DEFAULT '1',
   `needinfo` tinyint(1) NOT NULL DEFAULT '0',
+  `report_notifications` tinyint(4) DEFAULT '0',
+  `last_reports_view` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_username` (`username`),
   UNIQUE KEY `uniq_email` (`email`)

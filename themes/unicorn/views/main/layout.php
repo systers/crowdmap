@@ -22,6 +22,8 @@ $(function(){
 
 		<!-- right column -->
 		<div id="report-map-filter-box" class="clearingfix">
+			<!-- JP: Enable filters box if either media filters or category filters (or both) are enabled. -->
+			<?php if (Kohana::config('settings.enable_media_filters') OR Kohana::config('settings.enable_category_filters')): ?>
 			<a class="btn toggle" id="filter-menu-toggle" class="" href="#the-filters"><?php echo Kohana::lang('ui_main.filter_reports_by'); ?><span class="btn-icon ic-right">&raquo;</span></a>
 			
 			<!-- filters box -->
@@ -32,6 +34,8 @@ $(function(){
 				Event::run('ushahidi_action.main_sidebar_pre_filters');
 				?>
 				
+				<!-- JP: Enable category filters, depending on settings. -->
+				<?php if (Kohana::config('settings.enable_category_filters')): ?>
 				<!-- report category filters -->
 				<div id="report-category-filter">
 					<h3><?php echo Kohana::lang('ui_main.category');?></h3>
@@ -119,8 +123,11 @@ $(function(){
 					<!-- / category filters -->
 
 				</div>
+				<?php endif; ?>
 				<!-- / report category filters -->
 				
+				<!-- JP: Enable media/type filters, depending on settings. -->
+				<?php if (Kohana::config('settings.enable_media_filters')): ?>
 				<!-- report type filters -->
 				<div id="report-type-filter" class="filters">
 					<h3><?php echo Kohana::lang('ui_main.type'); ?></h3>
@@ -139,6 +146,7 @@ $(function(){
 							</div>
 							<!-- / report type filters -->
 				</div>
+				<?php endif; ?>
 			
 				<?php
 				// Action::main_sidebar_post_filters - Add Items to the Entry Page after filters
@@ -146,6 +154,7 @@ $(function(){
 				?>
 						
 			</div>
+			<?php endif; ?>
 			<!-- / filters box -->
 			
 			<?php
@@ -179,6 +188,8 @@ $(function(){
 			?>
 			
 			
+			<!-- JP: Show or hide additional content with reporting options, depending on settings. -->
+			<?php if (Kohana::config('settings.show_reporting_options')): ?>
 			<!-- additional content -->
 			<?php
 			if (Kohana::config('settings.allow_reports'))
@@ -239,6 +250,7 @@ $(function(){
 
 				</div>
 			<?php } ?>
+			<?php endif; ?>
 			<!-- / additional content -->
 		</div>
 		<!-- / right column -->
@@ -250,6 +262,14 @@ $(function(){
 				echo $div_map;
 				echo $div_timeline;
 				?>
+
+				<!-- JP: Add filter search, if enabled. -->
+				<?php if (Kohana::config('settings.enable_filter_search')): ?>
+					<div id="filter-search-box">
+						<?php echo $filter_search; ?>
+					</div>
+				<?php endif; ?>
+
 			</div>
 		</div>
 		<!-- / content column -->

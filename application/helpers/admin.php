@@ -166,6 +166,8 @@ class admin_Core {
 		$menu = "";
 
 		$menu .= ($this_sub_page == "site") ? Kohana::lang('ui_main.site') : "<a href=\"".url::site()."admin/settings/site\">".Kohana::lang('ui_main.site')."</a>";
+		// JP: added subtab for homepage settings
+		$menu .= ($this_sub_page == "homepage") ? Kohana::lang('ui_main.homepage') : "<a href=\"".url::site()."admin/settings/homepage\">".Kohana::lang('ui_main.homepage')."</a>";
 
 		$menu .= ($this_sub_page == "map") ? Kohana::lang('ui_main.map') : "<a href=\"".url::site()."admin/settings\">".Kohana::lang('ui_main.map')."</a>";
 

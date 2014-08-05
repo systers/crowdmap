@@ -29,9 +29,12 @@
 				</ul>
 			</div>
 			<?php endif; ?>
+			<!-- JP: This hidden field should only be used if the form-selector dropdown is not active (i.e. no custom forms exist). Its value should also be set to 1 by default. -->
+			<?php if (count($forms) == 1): ?>
 			<div class="row">
-				<input type="hidden" name="form_id" id="form_id" value="<?php echo $id?>">
+				<input type="hidden" name="form_id" id="form_id" value="1">
 			</div>
+			<?php endif; ?>
 			<div class="report_left">
 				<div class="report_row">
 					<?php if(count($forms) > 1): ?>
@@ -43,13 +46,14 @@
 						</span>
 						<div id="form_loader"></div>
 						</h4>
-					</div>
+					</div><br>
 					<?php endif; ?>
-					<h4><?php echo Kohana::lang('ui_main.reports_title'); ?> <span class="required">*</span> </h4>
+					<!-- JP: Added advanced settings from the form data -->
+					<h4><span id="report_title_name"><?php echo (!empty($form['form_data']->report_title_name) ? $form['form_data']->report_title_name : Kohana::lang('ui_main.reports_title')); ?></span> <span class="required">*</span> </h4>
 					<?php print form::input('incident_title', $form['incident_title'], ' class="text long"'); ?>
 				</div>
-				<div class="report_row">
-					<h4><?php echo Kohana::lang('ui_main.reports_description'); ?> <span class="required">*</span> </h4>
+				<div class="report_row" id="description_row" style="<?php echo 'display: ', ($form['form_data']->description_active) ? 'block' : 'none'; ?>">
+					<h4><span id="description_name"><?php echo (!empty($form['form_data']->description_name) ? $form['form_data']->description_name : Kohana::lang('ui_main.reports_description')); ?></span> <span class="required">*</span> </h4>
 					<span class="allowed-html"><?php echo html::allowed_html(); ?></span>
 					<?php print form::textarea('incident_description', $form['incident_description'], ' rows="10" class="textarea long" ') ?>
 				</div>
@@ -128,7 +132,7 @@
 				Event::run('ushahidi_action.report_form');
 				?>
 
-				<?php echo $custom_forms ?>
+				<?php echo $custom_forms; ?>
 
 				<div class="report_optional">
 					<h3><?php echo Kohana::lang('ui_main.reports_optional'); ?></h3>

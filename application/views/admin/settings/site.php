@@ -210,6 +210,19 @@
 								<?php print form::dropdown('require_email_confirmation', $yesno_array, $form['require_email_confirmation']); ?>
 							</span>
 						</div>
+						<!-- JP: Added dashboard redirect and enable notifications booleans. -->
+						<div class="row">
+							<h4><a href="#" class="tooltip" title="<?php echo Kohana::lang("tooltips.settings_dashboard_redirect"); ?>"><?php echo Kohana::lang('settings.site.dashboard_redirect'); ?></a></h4>
+							<span class="sel-holder">
+								<?php print form::dropdown('dashboard_redirect', $yesno_array, $form['dashboard_redirect']); ?>
+							</span>
+						</div>
+						<div class="row">
+							<h4><a href="#" class="tooltip" title="<?php echo Kohana::lang("tooltips.settings_enable_report_notifications"); ?>"><?php echo Kohana::lang('settings.site.enable_report_notifications'); ?></a></h4>
+							<span class="sel-holder">
+								<?php print form::dropdown('enable_report_notifications', $yesno_array, $form['enable_report_notifications']); ?>
+							</span>
+						</div>
 						<div class="row">
 						<h4><a href="#" class="tooltip" title="<?php echo Kohana::lang("tooltips.settings_google_analytics"); ?>"><?php echo Kohana::lang('settings.site.google_analytics');?></a></h4>
 							<?php echo Kohana::lang('settings.site.google_analytics_example');?> &nbsp;&nbsp;

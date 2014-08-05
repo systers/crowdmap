@@ -38,16 +38,23 @@ class Login_Controller extends Template_Controller {
 
 		$auth = Auth::instance();
 
-		// If already logged in redirect to user account page
+		// JP: If a user is already logged in, redirect to either his/her dashboard or the site index page, depending on settings.
 
 		$insufficient_role = FALSE;
 
 		if ($auth->logged_in())
 		{
-			// Redirect users to the relevant dashboard
 			if ($auth->logged_in('login'))
 			{
-				url::redirect($auth->get_user()->dashboard());
+				// JP: Redirect to either user dashboard or site index page, depending on settings.
+				if (Kohana::config('settings.dashboard_redirect'))
+				{
+					url::redirect($auth->get_user()->dashboard());
+				}
+				else
+				{
+					url::redirect();
+				}
 			}
 
 			$insufficient_role = TRUE;
@@ -176,8 +183,15 @@ class Login_Controller extends Template_Controller {
 						// Action::user_login - User Logged In
 						Event::run('ushahidi_action.user_login',$user);
 
-						// Exists Redirect to Dashboard
-						url::redirect($user->dashboard());
+						// JP: Redirect to either user dashboard or site index page, depending on settings.
+						if (Kohana::config('settings.dashboard_redirect'))
+						{
+							url::redirect($user->dashboard());
+						}
+						else
+						{
+							url::redirect();
+						}
 					}
 					else
 					{
@@ -524,8 +538,15 @@ class Login_Controller extends Template_Controller {
 							// Initiate Ushahidi side login + AutoLogin
 							$auth->force_login($openid_user->user->username);
 
-							// Exists Redirect to Dashboard
-							url::redirect($user->dashboard());
+							// JP: Redirect either to user dashboard or site index page, depending on settings.
+							if (Kohana::config('settings.dashboard_redirect'))
+							{
+								url::redirect($user->dashboard());
+							}
+							else
+							{
+								url::redirect();
+							}
 						}
 						else
 						{
@@ -581,8 +602,15 @@ class Login_Controller extends Template_Controller {
 									// Initiate Ushahidi side login + AutoLogin
 									$auth->login($username, $password, TRUE);
 
-									// Redirect to Dashboard
-									url::redirect($user->dashboard());
+									// JP: Redirect either to user dashboard or site index page, depending on settings.
+									if (Kohana::config('settings.dashboard_redirect'))
+									{
+										url::redirect($user->dashboard());
+									}
+									else
+									{
+										url::redirect();
+									}
 								}
 							}
 						}
@@ -747,8 +775,15 @@ class Login_Controller extends Template_Controller {
 					// Initiate Ushahidi side login + AutoLogin
 					$auth->force_login($openid_user->user->username);
 
-					// Exists Redirect to Dashboard
-					url::redirect($auth->get_user()->dashboard());
+					// JP: Redirect either to user dashboard or site index page, depending on settings.
+					if (Kohana::config('settings.dashboard_redirect'))
+					{
+						url::redirect($auth->get_user()->dashboard());
+					}
+					else
+					{
+						url::redirect();
+					}
 				}
 				else
 				{
@@ -804,8 +839,15 @@ class Login_Controller extends Template_Controller {
 							// Initiate Ushahidi side login + AutoLogin
 							$auth->login($username, $password, TRUE);
 
-							// Redirect to Dashboard
-							url::redirect($auth->get_user()->dashboard());
+							// JP: Redirect either to user dashboard or site index page, depending on settings.
+							if (Kohana::config('settings.dashbaord_redirect'))
+							{
+								url::redirect($auth->get_user()->dashboard());
+							}
+							else
+							{
+								url::redirect();
+							}
 						}
 					}
 				}

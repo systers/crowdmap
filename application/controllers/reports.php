@@ -16,17 +16,17 @@
 class Reports_Controller extends Main_Controller {
 	
 	/**
-	 * Whether an admin console user is logged in
+	 * JP: Whether an admin console user is logged in.
 	 * @var bool
 	 */
-	var $logged_in;
+	var $admin_logged_in; 
 
 	public function __construct()
 	{
 		parent::__construct();
 
-		// Is the Admin Logged In?
-		$this->logged_in = Auth::instance()->logged_in();
+		// JP: Is an admin logged in? This is used later for determining if there should be an admin edit link when the details of a report are viewed.
+		$this->admin_logged_in = Auth::instance()->logged_in('admin');
 	}
 
 	/**
@@ -250,6 +250,7 @@ class Reports_Controller extends Main_Controller {
 		$this->template->api_url = Kohana::config('settings.api_url');
 
 		// Setup and initialize form field names
+		// JP: added additional form data for advanced settings
 		$form = array(
 			'incident_title' => '',
 			'incident_description' => '',
@@ -272,7 +273,8 @@ class Reports_Controller extends Main_Controller {
 			'person_last' => '',
 			'person_email' => '',
 			'form_id'	  => '',
-			'custom_field' => array()
+			'custom_field' => array(),
+			'form_data' => array()
 		);
 
 		// Copy the form as errors, so the errors will be stored with keys corresponding to the form field names
@@ -293,14 +295,18 @@ class Reports_Controller extends Main_Controller {
 
 		// Initialize custom field array
 		$form['form_id'] = 1;
-		$form_id = $form['form_id'];
-		$form['custom_field'] = customforms::get_custom_form_fields($id,$form_id,true);
+		// JP: Removed the $form_id variable since it was being mistakenly used later as the ID of the posted form, resulting in bugs. Changed instances of $form_id to $form['form_id'] (like below) and $post['form_id'], if posted.
+		$form['custom_field'] = customforms::get_custom_form_fields($id, $form['form_id'], true);
+
+		// JP: Grab additional form information for advanced settings.
+		$form['form_data'] = customforms::get_custom_form($form['form_id']);
 
 		// GET custom forms
 		$forms = array();
 		foreach (customforms::get_custom_forms() as $custom_forms)
 		{
 			$forms[$custom_forms->id] = $custom_forms->form_title;
+			
 		}
 		$this->template->content->forms = $forms;
 
@@ -310,7 +316,10 @@ class Reports_Controller extends Main_Controller {
 		{
 			// Instantiate Validation, use $post, so we don't overwrite $_POST fields with our own things
 			$post = array_merge($_POST, $_FILES);
-			
+			// JP: Ensure that the advanced settings are correct.
+			$form['form_data'] = customforms::get_custom_form($post['form_id']);
+			// JP: Add the description_active boolean to our post data so the appropriate validation rules can be added.
+			$post['description_active'] = $form['form_data']->description_active;
 			// Adding event for endtime plugin to hook into
 			Event::run('ushahidi_action.report_posted_frontend', $post);
 
@@ -356,6 +365,16 @@ class Reports_Controller extends Main_Controller {
 
 				// Populate the error fields, if any
 				$errors = arr::merge($errors, $post->errors('report'));
+				// JP: Replace default Report Title and Description names with custom names in the error listing.
+				if ($errors['incident_title'] AND !empty($form['form_data']->report_title_name))
+				{
+					$errors['incident_title'] = str_replace(Kohana::lang('ui_main.reports_title'), $form['form_data']->report_title_name, $errors['incident_title']);
+				}
+				if ($errors['incident_description'] AND !empty($form['form_data']->description_name))
+				{
+					$errors['incident_description'] = str_replace(Kohana::lang('ui_main.reports_description'), $form['form_data']->description_name, $errors['incident_description']);
+				}
+
 				$form_error = TRUE;
 			}
 		}
@@ -381,7 +400,8 @@ class Reports_Controller extends Main_Controller {
 
 		// Retrieve Custom Form Fields Structure
 		$this->template->content->custom_forms = new View('reports/submit_custom_forms');
-		$disp_custom_fields = customforms::get_custom_form_fields($id, $form_id, FALSE);
+		// JP: This needs to be passed $form['form_id'] rather than $form_id so that we use the correct custom fields.
+		$disp_custom_fields = customforms::get_custom_form_fields($id, $form['form_id'], FALSE);
 		$this->template->content->disp_custom_fields = $disp_custom_fields;
 		$this->template->content->stroke_width_array = $this->_stroke_width_array();
 		$this->template->content->custom_forms->disp_custom_fields = $disp_custom_fields;
@@ -714,8 +734,18 @@ class Reports_Controller extends Main_Controller {
 			$this->template->content->comments_form->form_error = $form_error;
 		}
 
-		// If the Admin is Logged in - Allow for an edit link
-		$this->template->content->logged_in = $this->logged_in;
+		// JP: If an admin is logged in, allow for an admin edit link.
+		$this->template->content->admin_logged_in = $this->admin_logged_in;
+                // JP: If the author of the specific report is logged in, allow for a member edit link.
+                if ($this->user)
+                {
+                  $this->template->content->author_logged_in = ($incident->user_id == $this->user->id);
+                }
+                else
+                {
+                  $this->template->content->author_logged_in = FALSE;
+                }
+
 	}
 
 	/**
@@ -967,6 +997,7 @@ class Reports_Controller extends Main_Controller {
 
 	/**
 	 * Ajax call to update Incident Reporting Form
+	 * JP: added custom advanced settings data to JSON
 	 */
 	public function switch_form()
 	{
@@ -974,9 +1005,13 @@ class Reports_Controller extends Main_Controller {
 		$this->auto_render = FALSE;
 		isset($_POST['form_id']) ? $form_id = $_POST['form_id'] : $form_id = "1";
 		isset($_POST['incident_id']) ? $incident_id = $_POST['incident_id'] : $incident_id = "";
-		
-		$form_fields = customforms::switcheroo($incident_id,$form_id);
-		echo json_encode(array("status"=>"success", "response"=>$form_fields));
+		$form_data = array();
+		$selected_form = customforms::get_custom_form($form_id);
+		$form_data['report_title_name'] = $selected_form->report_title_name;
+		$form_data['description_name'] = $selected_form->description_name;
+		$form_data['description_active'] = $selected_form->description_active;
+		$form_data['fields'] = customforms::switcheroo($incident_id,$form_id);
+		echo json_encode(array("status"=>"success", "response"=>$form_data));
 	}
 
 }

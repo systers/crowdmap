@@ -16,19 +16,24 @@
  */
 ?>
 // Date Picker JS
+// JP: Added changeMonth and changeYear API options.
 jQuery(document).ready(function() {
 	jQuery("#dp1").datepicker({ 
 	    showOn: "both",
 		dateFormat: "yy-mm-dd",
 	    buttonImage: "<?php echo url::file_loc('img'); ?>media/img/icon-calendar.gif", 
-	    buttonImageOnly: true 
+	    buttonImageOnly: true,
+	    changeMonth: true,
+	    changeYear: true
 	});
 	
 	jQuery("#dp2").datepicker({ 
 	    showOn: "both",
 		dateFormat: "yy-mm-dd",
 	    buttonImage: "<?php echo url::file_loc('img'); ?>media/img/icon-calendar.gif", 
-	    buttonImageOnly: true 
+	    buttonImageOnly: true,
+	    changeMonth: true,
+	    changeYear: true
 	});
 	
 	

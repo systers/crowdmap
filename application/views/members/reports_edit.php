@@ -75,12 +75,13 @@
 								</span>
 								<div id="form_loader" style="float:left;"></div>
 							</div>
+							<!-- JP: Added advanced settings from the form data -->
 							<div class="row">
-								<h4><?php echo Kohana::lang('ui_main.title');?></h4>
+								<h4><span id="report_title_name" class="name-text"><?php echo (!empty($form['form_data']->report_title_name) ? $form['form_data']->report_title_name : Kohana::lang('ui_main.reports_title')); ?></span> <span class="required">*</span> </h4>
 								<?php print form::input('incident_title', $form['incident_title'], ' class="text title"'); ?>
 							</div>
-							<div class="row">
-								<h4><?php echo Kohana::lang('ui_main.description');?> <span><?php echo Kohana::lang('ui_main.include_detail');?>.</span></h4>
+							<div class="row" id="description_row" style="<?php echo 'display: ', ($form['form_data']->description_active) ? 'block' : 'none'; ?>">
+								<h4><span id="description_name" class="name-text"><?php echo (!empty($form['form_data']->description_name) ? $form['form_data']->description_name : Kohana::lang('ui_main.reports_description')); ?></span> <span class="required">*</span> <span><?php echo Kohana::lang('ui_main.include_detail');?>.</span></h4>
 								<span class="allowed-html"><?php echo html::allowed_html(); ?></span>
 								<?php print form::textarea('incident_description', $form['incident_description'], ' rows="12" cols="40"'); ?>
 							</div>

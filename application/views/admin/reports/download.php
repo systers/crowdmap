@@ -46,6 +46,8 @@
 			<p>
 				<span><?php print form::radio('format','csv', TRUE); ?><?php echo Kohana::lang('ui_admin.csv')?></span>
 				<span><?php print form::radio('format','xml', FALSE); ?><?php echo Kohana::lang('ui_admin.xml') ?></span>
+				<!-- JP: Added HTML download option. -->
+				<span><?php print form::radio('format','html', FALSE); ?><?php echo Kohana::lang('ui_admin.html') ?></span>
 			</p>
 			<span style="font-weight: bold; color: #00699b; display: block; padding-bottom: 5px;"><?php echo Kohana::lang('ui_main.choose_data_points');?>:</span>
 			<table class="data_points">
@@ -102,6 +104,16 @@
 				<tr>
 					<td><?php print form::checkbox('data_include[]','7',in_array(7, $form['data_include'])); ?><?php echo Kohana::lang('ui_main.include_personal_info');?></td>
 					<td></td>
+				</tr>
+			</table>
+			<!-- JP: Added filter by search option. -->
+			<span  style="font-weight: bold; color:#00699b; display: block;padding-bottom: 5px;"><?php echo Kohana::lang('ui_main.filter_by_search');?>:</span>
+			<table class="data_points">
+				<tr>
+					<td colspan="2">
+						<strong><?php echo Kohana::lang('ui_main.keywords');?></strong><br>
+						<?php print form::input('filter_search', $form['filter_search'], ' class="text", SIZE=30'); ?>	
+					</td>
 				</tr>
 			</table>
 			<input id="save_only" type="submit" value="<?php echo utf8::strtoupper(Kohana::lang('ui_main.download'));?>" class="save-rep-btn" />

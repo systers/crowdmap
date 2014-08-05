@@ -182,6 +182,13 @@ class Reports_Controller extends Admin_Controller {
 								// 2 = report that has had an alert sent
 								$update->incident_alert_status = '1';
 							}
+
+							// JP: If enabled, update report notifications.
+							if (Kohana::config('settings.enable_report_notifications'))
+							{
+								reports::send_notifications($post->action, $update); 
+							}
+
 							$update->save();
 
 							// Record 'Verified By' Action
@@ -190,9 +197,9 @@ class Reports_Controller extends Admin_Controller {
 							// Action::report_approve - Approve a Report
 							Event::run('ushahidi_action.report_approve', $update);
 						}
-						$form_action = utf8::strtoupper(Kohana::lang('ui_admin.approved'));
 					}
-
+					// JP: There's no need for this to be in the foreach loop!
+					$form_action = utf8::strtoupper(Kohana::lang('ui_admin.approved'));
 				}
 				
 				// Unapprove Action
@@ -209,6 +216,12 @@ class Reports_Controller extends Admin_Controller {
 							if ($update->incident_alert_status == '1')
 							{
 								$update->incident_alert_status = '0';
+							}
+
+							// JP: If enabled, update report notifications.
+							if (Kohana::config('settings.enable_report_notifications'))
+							{
+								reports::send_notifications($post->action, $update);
 							}
 
 							$update->save();
@@ -261,6 +274,12 @@ class Reports_Controller extends Admin_Controller {
 						$update = new Incident_Model($item);
 						if ($update->loaded)
 						{
+							// JP: If enabled, update report notifications.
+							if (Kohana::config('settings.enable_report_notifications'))
+							{
+								reports::send_notifications($post->action, $update);
+							}
+
 							$update->delete();
 						}
 					}
@@ -327,6 +346,7 @@ class Reports_Controller extends Admin_Controller {
 		$this->template->content->title = Kohana::lang('ui_admin.create_report');
 
 		// Setup and initialize form field names
+		// JP: added additional form data for advanced settings
 		$form = array(
 			'location_id' => '',
 			'form_id' => '',
@@ -353,7 +373,8 @@ class Reports_Controller extends Admin_Controller {
 			'custom_field' => array(),
 			'incident_active' => '',
 			'incident_verified' => '',
-			'incident_zoom' => ''
+			'incident_zoom' => '',
+			'form_data' => array()
 		);
 
 		// Copy the form as errors, so the errors will be stored with keys
@@ -372,22 +393,24 @@ class Reports_Controller extends Admin_Controller {
 		$form['incident_ampm'] = date('a');
 		$form['country_id'] = Kohana::config('settings.default_country');
 
-		// get the form ID if relevant, kind of a hack
-		// to just hit the database like this for one
-		// tiny bit of info then throw away the DB model object,
-		// but seems to be what everyone else does, so
-		// why should I care. Just know that when your Ush system crashes
-		// because you have 1000 concurrent users you'll need to do this
-		// correctly. Etherton.
-		$form['form_id'] = 1;
-		$form_id = $form['form_id'];
-		if ($id AND Incident_Model::is_valid_incident($id, FALSE))
+		// JP: If we are editing an existing report, given by $id,
+		// we need to make sure we are using the correct form id.
+		// Otherwise, we use the id of the default report (1).
+		if ($id and Incident_Model::is_valid_incident($id, FALSE))
 		{
-			$form_id = ORM::factory('incident', $id)->form_id;
+			$form['form_id'] = ORM::factory('incident', $id)->form_id;
 		}
-		
+		else
+		{
+			$form['form_id'] = 1;
+		}
+
 		// Initialize custom field array
+		$form_id = $form['form_id'];
 		$form['custom_field'] = customforms::get_custom_form_fields($id,$form_id,TRUE);
+
+		// JP: Grab additional form information for advanced settings
+		$form['form_data'] = customforms::get_custom_form($form_id);
 
 		// Locale (Language) Array
 		$this->template->content->locale_array = Kohana::config('locale.all_languages');
@@ -590,6 +613,13 @@ class Reports_Controller extends Admin_Controller {
 			 * As such, all plugins making use of this event shall have to be updated
 			 */
 
+			// JP: Make sure we are using the correct form ID so that the page does not revert to the default form if it is reloaded.
+			$form_id = $post['form_id'];
+			// JP: Ensure that the advanced settings are correct.
+			$form['form_data'] = customforms::get_custom_form($form_id);
+			// JP: Add the description_active boolean to our post data so the appropriate validation rules can be added
+			$post['description_active'] = $form['form_data']->description_active;
+
 			// Action::report_submit_admin - Report Posted
 			Event::run('ushahidi_action.report_submit_admin', $post);
 
@@ -605,7 +635,27 @@ class Reports_Controller extends Admin_Controller {
 
 				// STEP 2: SAVE INCIDENT
 				$incident = new Incident_Model($id);
+				// JP: Before we save the incident, we need to check if the report is currently active or inactive. (Used in step 2a.)
+				$currently_active = $incident->incident_active;
 				reports::save_report($post, $incident, $location->id);
+
+				// JP: STEP 2a: If enabled, update report notifications.
+				if (Kohana::config('settings.enable_report_notifications'))
+				{
+					$active_on_form = $post->incident_active;
+					if ($currently_active != $active_on_form)
+					{
+						if ($currently_active < $active_on_form)
+						{
+							$action = 'a';
+						}
+						else if ($currently_active > $active_on_form)
+						{
+							$action = 'u';
+						}
+						reports::send_notifications($action, $incident);
+					}
+				}
 
 				// STEP 2b: Record Approval/Verification Action
 				reports::verify_approve($incident);
@@ -690,6 +740,16 @@ class Reports_Controller extends Admin_Controller {
 
 				// Populate the error fields, if any
 				$errors = arr::merge($errors, $post->errors('report'));
+				// JP: replace default Report Title and Description names with custom names in the error listing.
+				if ($errors['incident_title'] AND !empty($form['form_data']->report_title_name))
+				{
+					$errors['incident_title'] = str_replace(Kohana::lang('ui_main.reports_title'), $form['form_data']->report_title_name, $errors['incident_title']);
+				}
+				if ($errors['incident_description'] AND !empty($form['form_data']->description_name))
+				{
+					$errors['incident_description'] = str_replace(Kohana::lang('ui_main.reports_description'), $form['form_data']->description_name, $errors['incident_description']);
+				}
+
 				$form_error = TRUE;
 			}
 		}
@@ -857,6 +917,7 @@ class Reports_Controller extends Admin_Controller {
 
 	/**
 	 * Download Reports in CSV format
+	 * JP: Added filter by search option. Also added HTML download.
 	 */
 	public function download()
 	{
@@ -876,7 +937,8 @@ class Reports_Controller extends Admin_Controller {
 			'data_include' => array(),
 			'from_date'	   => '',
 			'to_date'	   => '',
-			'form_auth_token'=> ''
+			'form_auth_token'=> '',
+			'filter_search' => ''
 		);
 
 		// Default to all selected
@@ -903,6 +965,7 @@ class Reports_Controller extends Admin_Controller {
 				$show_inactive = FALSE;
 				$show_verified = FALSE;
 				$show_not_verified = FALSE;
+				$filter_search = FALSE;
 				
 				if (in_array(1, $post->data_active))
 				{
@@ -922,6 +985,11 @@ class Reports_Controller extends Admin_Controller {
 				if (in_array(0, $post->data_verified))
 				{
 					$show_not_verified = TRUE;
+				}
+
+				if (!empty($post->filter_search))
+				{
+					$filter_search = TRUE;
 				}
 				
 				// Handle active or not active
@@ -977,6 +1045,59 @@ class Reports_Controller extends Admin_Controller {
 					$filter .= " AND incident_date <= '" . date("Y-m-d H:i:s",strtotime($post->to_date)) . "' ";
 				}
 
+				// JP: Search Filter
+				if ($filter_search)
+				{
+
+					$where_string = "";
+					$or = "";
+
+					// Stop words that we won't search for
+					// Add words as needed!!
+					$stop_words = array('the', 'and', 'a', 'to', 'of', 'in', 'i', 'is', 'that', 'it',
+						'on', 'you', 'this', 'for', 'but', 'with', 'are', 'have', 'be',
+						'at', 'or', 'as', 'was', 'so', 'if', 'out', 'not'
+					);
+
+					// Phase 1 - Fetch the search string and perform initial sanitization
+					$keyword_raw = preg_replace('#/\w+/#', '', $post->filter_search);
+
+					// Phase 2 - Strip the search string of any HTML and PHP tags that may be present for additional safety
+					$keyword_raw = strip_tags($keyword_raw);
+
+					// Phase 3 - Apply Kohana's XSS cleaning mechanism
+					$keyword_raw = $this->input->xss_clean($keyword_raw);
+
+					// Database instance
+					$db = new Database();
+
+					$keywords = explode(' ', $keyword_raw);
+					if (is_array($keywords) AND ! empty($keywords)) 
+					{
+						array_change_key_case($keywords, CASE_LOWER);
+						$i = 0;
+
+						foreach($keywords as $value)
+						{
+							if ( ! in_array($value,$stop_words) AND ! empty($value))
+							{
+								// Escape the string for query safety
+								$chunk = $db->escape_str($value);
+
+								if ($i > 0)
+								{
+									$or = ' OR ';
+								}
+
+								$where_string = $where_string.$or."(incident_title LIKE '%$chunk%' OR incident_description LIKE '%$chunk%')";
+								$i++;
+							}
+						}
+					}
+
+					$filter .= " AND ".$where_string;
+				}
+
 				// Retrieve reports
 				$incidents = ORM::factory('incident')->where($filter)->orderby('incident_dateadd', 'desc')->find_all();
 
@@ -991,18 +1112,18 @@ class Reports_Controller extends Admin_Controller {
 
 				// If CSV format is selected
 				if($post->format == 'csv')
-					{
+				{
 					$report_csv = download::download_csv($post, $incidents, $custom_forms);
 
-				// Output to browser
-				header("Content-type: text/x-csv");
-				header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-				header("Content-Disposition: attachment; filename=" . time() . ".csv");
-				header("Content-Length: " . strlen($report_csv));
-				echo $report_csv;
-				exit;
+					// Output to browser
+					header("Content-type: text/x-csv");
+					header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+					header("Content-Disposition: attachment; filename=" . time() . ".csv");
+					header("Content-Length: " . strlen($report_csv));
+					echo $report_csv;
+					exit;
 					
-			}
+				}
 
 				// If XML format is selected
 				if($post->format == 'xml')
@@ -1014,6 +1135,19 @@ class Reports_Controller extends Admin_Controller {
 					echo $content;
 					exit;
 				}
+
+				// JP: If HTML format is selected...
+				if ($post->format == 'html')
+				{
+					$content = download::download_html($post, $incidents, $custom_forms);
+					header("Content-type: text/html; charset=UTF-8");
+					header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+					header("Content-Disposition: attachment; filename=" . time() . ".html");
+					header("Content-Length: " . strlen($content));
+					echo $content;
+					exit;
+				}
+
 			}
 
 			// No! We have validation errors, we need to show the form again, with the errors
@@ -1210,6 +1344,13 @@ class Reports_Controller extends Admin_Controller {
 			Database::instance()->query("TRUNCATE TABLE `" . $table_prefix . "incident_lang`");
 			Database::instance()->query("TRUNCATE TABLE `" . $table_prefix . "incident_category`");
 			Database::instance()->query("TRUNCATE TABLE `" . $table_prefix . "incident`");
+
+			// JP: Get rid of any existing notifications.
+			foreach(ORM::factory('user')->where('report_notifications >= 1')->find_all() as $user)
+			{
+				$user->report_notifications = 0;
+				$user->save();
+			}
 		}
 
 
