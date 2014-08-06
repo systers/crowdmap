@@ -69,7 +69,7 @@ class Reports_Controller extends Main_Controller {
 		// Load the alert radius view
 		$alert_radius_view = new View('alerts/radius');
 		$alert_radius_view->show_usage_info = FALSE;
-		$alert_radius_view->enable_find_location = FALSE;
+		$alert_radius_view->enable_find_location = TRUE;
 		$alert_radius_view->css_class = "rb_location-radius";
 
 		$this->template->content->alert_radius_view = $alert_radius_view;

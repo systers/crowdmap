@@ -43,15 +43,20 @@
 	
 	$(document).ready(function() {
 	
-	
+		//only show Fields for PCV Name, Contact Person, Counterpart Name, Director Name 	
+		$("input[id^='custom_field_1']:text").val("");	
+		$("input[id^='custom_field_2']:text").val("");
+		$("input[id^='custom_field_3']:text").val("");
+		$("input[id^='custom_field_4']:text").val("");
+		$("input[id^='custom_field_5']:text").parent().remove();
 		//add Not Selected values to the custom form fields that are drop downs
 		$("select[id^='custom_field_']").prepend('<option value="---NOT_SELECTED---"><?php echo Kohana::lang("ui_main.not_selected"); ?></option>');
 		$("select[id^='custom_field_']").val("---NOT_SELECTED---");
 		$("input[id^='custom_field_']:checkbox").removeAttr("checked");
 		$("input[id^='custom_field_']:radio").removeAttr("checked");
-		$("input[id^='custom_field_']:text").val("");
 		// Hide textareas - should really replace with a keyword search field
 		$("textarea[id^='custom_field_']").parent().remove();
+		
 		  
 		// "Choose Date Range"" Datepicker
 		var dates = $( "#report_date_from, #report_date_to" ).datepicker({
@@ -701,6 +706,15 @@
 			{
 				urlParameters["v"] = verificationStatus;
 			}
+
+
+			//Get the Keyword Custom Form Filter
+			var keywords = []; 
+				if ($("#custom_field_0").val() != '')
+			{
+				urlParameters['custom_field_0'] = $("#custom_field_0").val();
+				keywords = $("#custom_field_0").val();
+			}
 			
 			//
 			// Get the Custom Form Fields
@@ -712,6 +726,7 @@
 				var cffId = item.id.substring("custom_field_".length);
 				var value = $(item).val();
 				var type = $(item).attr("type");
+				
 				if(type == "text")
 				{
 					if(value != "" && value != undefined && value != null)
@@ -940,4 +955,4 @@
 		// Remove the parameter key from urlParameters
 		delete urlParameters[parameterKey];
 	}
-	
+

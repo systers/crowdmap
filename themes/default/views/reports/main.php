@@ -96,106 +96,29 @@
 						</div>
 						
 						<h3>
-							<a href="#" class="small-link-button f-clear reset" onclick="removeParameterKey('mode', 'fl-incident-mode');">
-								<?php echo Kohana::lang('ui_main.clear')?>
-							</a>
-							<a class="f-title" href="#"><?php echo Kohana::lang('ui_main.type')?></a>
-						</h3>
-						<div class="f-type-box">
-							<ul class="filter-list fl-incident-mode">
-								<li>
-									<a href="#" id="filter_link_mode_1">
-										<span class="item-icon ic-webform">&nbsp;</span>
-										<span class="item-title"><?php echo Kohana::lang('ui_main.web_form'); ?></span>
-									</a>
-								</li>
-							
-							<?php foreach ($services as $id => $name): ?>
-								<?php
-									$item_class = "";
-									if ($id == 1) $item_class = "ic-sms";
-									if ($id == 2) $item_class = "ic-email";
-									if ($id == 3) $item_class = "ic-twitter";
-								?>
-								<li>
-									<a href="#" id="filter_link_mode_<?php echo ($id + 1); ?>">
-										<span class="item-icon <?php echo $item_class; ?>">&nbsp;</span>
-										<span class="item-title"><?php echo $name; ?></span>
-									</a>
-								</li>
-							<?php endforeach; ?>
-
-							</ul>
-						</div>
-						
-						<h3>
-							<a href="#" class="small-link-button f-clear reset" onclick="removeParameterKey('m', 'fl-media');"><?php echo Kohana::lang('ui_main.clear')?></a>
-							<a class="f-title" href="#"><?php echo Kohana::lang('ui_main.media');?></a>
-						</h3>
-						<div class="f-media-box">
-							<p><?php echo Kohana::lang('ui_main.filter_reports_contain'); ?>&hellip;</p>
-							<ul class="filter-list fl-media">
-								<li>
-									<a href="#" id="filter_link_media_1">
-										<span class="item-icon ic-photos">&nbsp;</span>
-										<span class="item-title"><?php echo Kohana::lang('ui_main.photos'); ?></span>
-									</a>
-								</li>
-								<li>
-									<a href="#" id="filter_link_media_2">
-										<span class="item-icon ic-videos">&nbsp;</span>
-										<span class="item-title"><?php echo Kohana::lang('ui_main.video'); ?></span>
-									</a>
-								</li>
-								<li>
-									<a href="#" id="filter_link_media_4">
-										<span class="item-icon ic-news">&nbsp;</span>
-										<span class="item-title"><?php echo Kohana::lang('ui_main.reports_news')?></span>
-									</a>
-								</li>
-							</ul>
-						</div>
-						
-						<h3>
-							<a href="#" class="small-link-button f-clear reset" onclick="removeParameterKey('v', 'fl-verification');">
-								<?php echo Kohana::lang('ui_main.clear'); ?>
-							</a>
-							<a class="f-title" href="#"><?php echo Kohana::lang('ui_main.verification'); ?></a>
-						</h3>
-						<div class="f-verification-box">
-							<ul class="filter-list fl-verification">
-								<li>
-									<a href="#" id="filter_link_verification_1">
-										<span class="item-icon ic-verified">&nbsp;</span>
-										<span class="item-title"><?php echo Kohana::lang('ui_main.verified'); ?></span>
-									</a>
-								</li>
-								<li>
-									<a href="#" id="filter_link_verification_0">
-										<span class="item-icon ic-unverified">&nbsp;</span>
-										<span class="item-title"><?php echo Kohana::lang('ui_main.unverified'); ?></span>
-									</a>
-								</li>
-								
-							</ul>
-						</div>
-						<h3>
 							<a href="#" class="small-link-button f-clear reset" onclick="removeParameterKey('cff', 'fl-customFields');">
 								<?php echo Kohana::lang('ui_main.clear'); ?>
 							</a>
 							<a class="f-title" href="#"><?php echo Kohana::lang('ui_main.custom_fields'); ?></a>
 						</h3>
 						<div class="f-customFields-box">
-							<?php echo $custom_forms_filter; ?>
-							
+
+							<div class="f-custom_fields-box">
+								<?php echo form::open(NULL, array('method' => 'get')); ?>
+                                <div class="report_row" id="custom_field_row_0"><h4><?php echo Kohana::lang('ui_main.keywords'); ?></h4>
+								<?php echo form::input('custom_field_0', '' , ' class="text custom_text"'); ?>
+                                </div>
+									<?php echo $custom_forms_filter; ?>
+								<?php echo form::close(); ?> 
+                            </div>
+	
+							<?php
+								// Action, allows plugins to add custom filters
+								Event::run('ushahidi_action.report_filters_ui');
+							?>
 						</div>
-						<?php
-							// Action, allows plugins to add custom filters
-							Event::run('ushahidi_action.report_filters_ui');
-						?>
-					</div>
 					<!-- end #accordion -->
-					
+					</div>
 					<div id="filter-controls">
 						<p>
 							<a href="#" class="small-link-button reset" id="reset_all_filters"><?php echo Kohana::lang('ui_main.reset_all_filters'); ?></a> 
@@ -222,5 +145,3 @@
 		<!-- end reports block -->
 		
 	</div>
-	<!-- end content-bg -->
-</div>
