@@ -703,6 +703,14 @@
 			{
 				urlParameters["v"] = verificationStatus;
 			}
+
+			//Get the Keyword Custom Form Filter
+			var keywords = []; 
+				if ($("#custom_field_0").val() != '')
+			{
+				urlParameters['custom_field_0'] = $("#custom_field_0").val();
+				keywords = $("#custom_field_0").val();
+			}
 			
 			//
 			// Get the Custom Form Fields
@@ -714,6 +722,7 @@
 				var cffId = item.id.substring("custom_field_".length);
 				var value = $(item).val();
 				var type = $(item).attr("type");
+				
 				if(type == "text")
 				{
 					if(value != "" && value != undefined && value != null)
