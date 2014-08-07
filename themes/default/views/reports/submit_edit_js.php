@@ -317,6 +317,50 @@
 				}
 			});
 			
+			// Add Azerbaijani Characters into Input Field
+			$('#az_char_buttons_e').on('click', function addChar(){
+				$('#location_find').val(function(n,c) {
+                        		return c + $('#az_char_buttons_e').val();
+                        		}) 
+			});
+
+			$('#az_char_buttons_c').on('click', function addChar(){
+                                 $('#location_find').val(function(n,c) {
+                                        return c + $('#az_char_buttons_c').val();
+                                        }) 
+                        }); 
+
+			$('#az_char_buttons_g').on('click', function addChar(){
+                                 $('#location_find').val(function(n,c) {
+                                        return c + $('#az_char_buttons_g').val();
+                                        })
+                        });
+			$('#az_char_buttons_i').on('click', function addChar(){
+                                 $('#location_find').val(function(n,c) {
+                                        return c + $('#az_char_buttons_i').val();
+                                        })
+                        });
+			$('#az_char_buttons_o').on('click', function addChar(){
+                                 $('#location_find').val(function(n,c) {
+                                        return c + $('#az_char_buttons_o').val();
+                                        })
+                        });
+			$('#az_char_buttons_u').on('click', function addChar(){
+                                 $('#location_find').val(function(n,c) {
+                                        return c + $('#az_char_buttons_u').val();
+                                        })
+                        });
+			$('#az_char_buttons_s').on('click', function addChar(){
+                                 $('#location_find').val(function(n,c) {
+                                        return c + $('#az_char_buttons_s').val();
+                                        })
+                        });
+			$('#az_char_buttons_w').on('click', function addChar(){
+                                 $('#location_find').val(function(n,c) {
+                                        return c + $('#az_char_buttons_w').val();
+                                        })
+                        });
+
 			// Event on Latitude/Longitude Typing Change
 			$('#latitude, #longitude').bind("blur", function() {
 				var newlat = $("#latitude").val();

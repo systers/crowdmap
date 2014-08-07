@@ -200,6 +200,7 @@ div#searchbox{
     border: #9F9F9F 2px solid;
     border-top: 0;
     width:380px;
+    height: 60px;
     padding:0 0 10px 0;
     
 }
@@ -267,7 +268,6 @@ div.search-form input.searchbtn{
     text-transform: uppercase;
 }
 
-
 /* JP: Filter Search Styles */
 
 div#filter-search-box {
@@ -331,6 +331,55 @@ div.filter-search-form input.searchbtn {
 	text-transform: uppercase;
 }
 
+/* azerbaijani characters */
+div.az_char_location_find{
+    height: 30px;
+    float: left;
+    padding: 10px 0px 0px 10px; 
+}
+
+.az_char_table {
+	display: table;   /* Allow the centering to work */
+	margin: 0 auto;}
+
+
+div.az_char_location_find input.az_char_buttons{
+    color: white;
+    background-color:#999;
+    font-size:14px;
+    font-weight: bold; 
+    border: #868686 1px solid;
+    width: 24px;
+    height: 24px;
+    cursor: pointer; 
+}
+
+/* azerbaijani characters */
+div.az_char_search{
+    height: 30px;
+    float: left;
+    padding: 5px 0px 0px 110px;
+}
+
+div.az_char_search input.az_char_buttons{
+    color: black;
+    background-color:#EEEEEE;
+    font-size:14px;
+    font-weight: bold;
+    border: #868686 1px solid;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+ul.az_buttons{
+	list-style: none;
+}
+
+li.az_buttons{
+	display: inline;
+	padding-left: 5px; 
+}
 
 /* submit incident */
 div.submit-incident{
@@ -1099,7 +1148,7 @@ div.incident-notation ul li{
     padding-left: 0;
 }
 .category-icon img {
-	float:left;padding-right:5px;
+	float:left;padding-right:5px; size:10%;
 }
 
 /* Stylized Forms */
