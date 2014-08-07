@@ -208,7 +208,7 @@ jQuery(function() {
 
 		// Map controls
 		mapControls: [
-			new OpenLayers.Control.Navigation({ dragPanOptions: { enableKinetic: true } }),
+			new OpenLayers.Control.Navigation({ 'zoomWheelEnabled': false}),
 			new OpenLayers.Control.Attribution(),
 			new OpenLayers.Control.Zoom(),
 			new OpenLayers.Control.MousePosition({
@@ -240,7 +240,6 @@ jQuery(function() {
 		url: reportsURL,
 		transform: false
 	}, true, true);
-
 
 	// Register the referesh timeline function as a callback
 	map.register("filterschanged", refreshTimeline);
