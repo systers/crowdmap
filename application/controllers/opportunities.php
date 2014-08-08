@@ -28,23 +28,17 @@ class Opportunities_Controller extends Main_Controller {
 		$this->template->header->this_page = 'opportunities';
 		$this->template->content = new View('opportunities/main');
 		$this->template->header->page_title .= Kohana::lang('ui_main.opportunities').Kohana::config('settings.title_delimiter');
+		
+		$this->opportunities_model = new Opportunities_Model; 
 
-		// Load search of view
-		$search_of_view = new View('opportunities/main_opportunities_needed');
-		$this->template->content->search_of_view = $search_of_view;
-	
-		//Load resources available view
-		$resource_available_view = new View('opportunities/main_opportunities');
-		$this->template->content->resource_available_view = $resource_available_view;
-	
 		//Retrieve Opportunities
-		$this->template->content = new Opportunities_Model; 
-		$opportunities = $this->template->content->get_opportunities();
-		$opportunities = array(); 
+		$opportunities = $this->opportunities_model->get_opportunities(); 
+		$this->template->content->set('opportunities', $opportunities);
+		
 	
 		//Retrieve Opportunities Needed
-		$opporunities_needed = $this->template->content->get_opportunities_needed();
-		$opportunities_needed = array();
+		$opportunities_needed = $this->opportunities_model->get_opportunities_needed();
+		$this->template->content->set('opportunities_needed', $opportunities_needed);
 	
 	}
 
@@ -71,7 +65,7 @@ class Opportunities_Controller extends Main_Controller {
 			'available_from' => '',
 			'available_until' => '',
 			'contact' => '',
-			'additional_info' => '',
+			'add_info' => '',
 		);
 	
 		// Copy the form as errors, so the errors will be stored with keys
@@ -96,21 +90,21 @@ class Opportunities_Controller extends Main_Controller {
 			$post->add_rules('available_from', 'required', 'length[3,100]');
 			$post->add_rules('available_until', 'required');
 			$post->add_rules('contact', 'required', 'length[3,100]');
-			$post->add_rules('additional_info', 'required', 'length[3,100]');
+			$post->add_rules('add_info', 'required', 'length[3,100]');
 
 			// Test to see if things passed the rule checks
 			// Skip CSRF check since we have a CAPTCHA already
-			if ($post->validate(FALSE))
+			if ($post->validate())
 			{
 				// If valid post to Database
-				$form = new Opportunities_Model(); 
-				$form->resource_available = $post->resource_available;
-				$form->pcv_name = $post->pcv_name;
-				$form->available_from = $post->available_from;
-				$form->available_until = $post->available_until;
-				$form->contact = $post->contact;
-				$form->additional_info = $post->additional_info;			
-				$form->save(); 
+				$opportunities = new Opportunities_Model(); 
+				$opportunities->resource_available = $post->resource_available;
+				$opportunities->pcv_name = $post->pcv_name;
+				$opportunities->available_from = $post->available_from;
+				$opportunities->available_until = $post->available_until;
+				$opportunities->contact = $post->contact;
+				$opportunities->add_info = $post->add_info;			
+				$opportunities->save(); 
 			}
 			// No! We have validation errors, we need to show the form again, with the errors
 			else

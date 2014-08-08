@@ -2,7 +2,6 @@
 	<div class="content-bg">
 	<!-- start contacts block -->
 		<div class="big-block">
-		<?php print form::open(); ?>
 		<div id="contact_us" class="contact">
 			<?php
 				if ($form_error)
@@ -24,6 +23,7 @@
 				}
 			?>
 		<h1>Submit a new Resource</h1><br />
+			<?php print form::open(NULL, array('id' => 'opportunitiesForm', 'name' => 'opportunitiestForm')); ?>
 			<div class="report_row">
 				<h4><?php echo form::label('resource_available', 'Resource Available'); ?>:</h4><br />
 				<?php print form::input('resource_available', $form['resource_available'], 'class="text"'); ?></div>
@@ -41,12 +41,13 @@
 				<?php print form::textarea('contact', $form['contact'], '"rows="5" cols="40" class="textarea long"'); ?></div>
 			<div class="report_row">
 				<h4><?php echo form::label('additional_info', 'Additional Information'); ?>:</h4><br />
-				<?php print form::textarea('additional_info', $form['additional_info'], ' "rows="5" cols="40" class="textarea long"'); ?></div>
+				<?php print form::textarea('add_info', $form['add_info'], ' "rows="5" cols="40" class="textarea long"'); ?></div>
 		</div>
 
 	<div class="report_row">
 		<input name="submit" type="submit" value="Submit" class="btn_submit"> </div>
 		<?php print form::close(); ?>
+		<?php print form::open(); ?>
 		<!-- end report form block -->
 	</div>
 	</div>

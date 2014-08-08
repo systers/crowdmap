@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for reported Incidents
+ * Model for reported Opportunities ('in search of')
  *
  *
  * PHP version 5
@@ -40,7 +40,7 @@ class Opportunities_Model extends ORM {
 				$opportunity->available_from, 
 				$opportunity->available_until,
 				$opportunity->contact, 
-				$opportunity->additional_info, 
+				$opportunity->add_info, 
 			);
 		}
 		return $opportunities;

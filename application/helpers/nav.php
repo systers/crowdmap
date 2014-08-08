@@ -57,7 +57,7 @@ class nav_Core {
 			}
 		}
 		
-		// Alerts
+		// Opportunities
 		if(! in_array('opportunities',$dontshow))
 		{
 				$menu_items[] = array( 
