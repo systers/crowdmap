@@ -125,7 +125,8 @@ function showMap()
 	projection: proj_900913,
 	'displayProjection': proj_4326,
 	maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
-	maxResolution: 156543.0339
+	maxResolution: 156543.0339, 
+	eventListeners: { "zoomend": incidentZoom}
 	};
 	
 	map = new OpenLayers.Map('ReporterMap', options);
@@ -195,6 +196,12 @@ function showMap()
 			alert('Invalid value!')
 		}
 	});
+
+	function incidentZoom(event) {
+			if (map.getZoom() < <?php echo $default_zoom ?>) {
+				map.zoomTo(<?php echo $default_zoom ?>);
+			}	
+		}
 
 	// GeoCode
 	$('.btn_find').on('click', function () {

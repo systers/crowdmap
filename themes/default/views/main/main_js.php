@@ -206,6 +206,9 @@ jQuery(function() {
 			longitude: <?php echo Kohana::config('settings.default_lon'); ?>
 		},
 
+		//Event Listener to restrict Zoom Out
+		eventListeners: { "zoomend": incidentZoom},
+
 		// Map controls
 		mapControls: [
 			new OpenLayers.Control.Navigation({ 'zoomWheelEnabled': false}),
@@ -248,7 +251,12 @@ jQuery(function() {
 		e: endTime
 	}); }, 800);
 
-
+	function incidentZoom(event) {
+		if (map.getZoom() < <?php echo $default_zoom; ?>) {
+			map.zoomTo(<?php echo $default_zoom; ?>);
+                        }       
+                }
+	
 	// Category Switch Action
 	$("ul#category_switch li > a").click(function(e) {
 		

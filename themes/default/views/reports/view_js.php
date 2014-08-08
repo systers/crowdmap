@@ -28,7 +28,10 @@ jQuery(window).load(function() {
 
 		// Zoom level
 		zoom: <?php echo ($incident_zoom) ? $incident_zoom : intval(Kohana::config('settings.default_zoom')); ?>,
+		
+		eventListeners: { "zoomend": incidentZoom },
 
+		
 		// Map center
 		center: {
 			latitude: <?php echo $latitude; ?>,
@@ -221,6 +224,12 @@ jQuery(window).load(function() {
 	});
 
 }); // END jQuery(window).load();	
+
+function incidentZoom(event) {
+	if (map.getZoom() < <?php echo $default_zoom ?>) {
+		map.zoomTo(<?php echo $default_zoom ?>);
+		}			
+	}
 
 function rating(id,action,type,loader) {
 	$('#' + loader).html('<img src="<?php echo url::file_loc('img')."media/img/loading_g.gif"; ?>">');

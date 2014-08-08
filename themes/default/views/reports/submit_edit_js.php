@@ -902,8 +902,12 @@
 		
 		function incidentZoom(event) {
 			$("#incident_zoom").val(map.getZoom());
+
+			if (map.getZoom() < <?php echo $default_zoom ?>) {
+				map.zoomTo(<?php echo $default_zoom ?>);
+			}	
 		}
-		
+
 		function updateFeature(feature, color, strokeWidth){
 		
 			// Create a symbolizer from exiting stylemap

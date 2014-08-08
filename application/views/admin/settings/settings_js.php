@@ -27,7 +27,7 @@ $(document).ready(function() {
 			longitude: <?php echo $default_lon; ?>
 		},
 		mapControls: [
-		    new OpenLayers.Control.Navigation({ 'zoomWheelEnabled': false}),
+		    new OpenLayers.Control.Navigation({'zoomWheelEnabled': false}),
 		    new OpenLayers.Control.Zoom(),
 		    new OpenLayers.Control.MousePosition({
 				formatOutput: Ushahidi.convertLongLat
@@ -121,6 +121,12 @@ $(document).ready(function() {
 	});
 		
 });
+
+function incidentZoom(event) {
+	if (map.getZoom() < <?php echo $default_zoom ?>) {
+		map.zoomTo(<?php echo $default_zoom ?>);
+		}			
+	}
 
 // Retrieve Cities From Geonames DB (Ajax)
 function retrieveCities() {
