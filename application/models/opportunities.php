@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for reported Opportunities ('in search of')
+ * Model for reported Incidents
  *
  *
  * PHP version 5
@@ -56,14 +56,13 @@ class Opportunities_Model extends ORM {
 		$opportunities_needed = array();
 		foreach
 		(
-			ORM::factory('form_response')
-				->where('form_field_id', '=', '5')
-				->find_all() as $opportunities_needed)
+			ORM::factory('form_response')->where('form_field_id', 5)->find_all() as $opportunity_needed)
 		{
 			// Create a list of all opportunities
 			$opportunities_needed[$opportunity_needed->id] = array(
-				$opportunity_needed->search_of//, 
-				//$opportunity_needed->pcv_name,
+				$opportunity_needed->form_field_id,
+				$opportunity_needed->incident_id,
+				$opportunity_needed->form_response 
 			);
 		}
 		return $opportunities_needed;

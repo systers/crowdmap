@@ -85,12 +85,12 @@ class Opportunities_Controller extends Main_Controller {
 			$post->pre_filter('trim', TRUE);
 
 			// Add some rules, the input field, followed by a list of checks, carried out in order
-			$post->add_rules('resource_available', 'required', 'length[3,100]');
-			$post->add_rules('pcv_name', 'required', 'length[3,100]');
-			$post->add_rules('available_from', 'required', 'length[3,100]');
-			$post->add_rules('available_until', 'required');
-			$post->add_rules('contact', 'required', 'length[3,100]');
-			$post->add_rules('add_info', 'required', 'length[3,100]');
+			$post->add_rules('resource_available', 'required', 'length[3,50]');
+			$post->add_rules('pcv_name', 'required', 'length[3,20]');
+			$post->add_rules('available_from', 'required', 'length[3,10]');
+			$post->add_rules('available_until', 'required', 'length[3,10]');
+			$post->add_rules('contact', 'required', 'length[3,20]');
+			$post->add_rules('add_info', 'required', 'length[3,50]');
 
 			// Test to see if things passed the rule checks
 			// Skip CSRF check since we have a CAPTCHA already

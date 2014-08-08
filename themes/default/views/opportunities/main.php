@@ -14,7 +14,7 @@
 	<thead>
                 <tr>
                         <th scope="col" class="search_of">Resource Needed</th>
-                        <th scope="col" class="pcv_name">PCV NAME</th>
+                        <th scope="col" class="pcv_name">FOR INCIDENT ID</th>
                 </tr>
         </thead>
         <tbody>
@@ -27,12 +27,10 @@
               }
               foreach ($opportunities_needed as $opportunity_needed)
 		{
-                        $opportunity_needed = $opportunity_needed->search_of;
-                        //$pcv_name = $opportunity_needed->pcv_name;
                 ?>
                 <tr>
-                        <td><?php echo "1"; ?></td>
-                        <td><?php //echo //$pcv_name; ?></td>
+                        <td><?php echo $opportunity_needed['2']; ?></td>
+                        <td><?php echo $opportunity_needed['1']; ?></td>
                 </tr>
                 <?php
                 }
@@ -51,41 +49,31 @@
                 <tr>
                         <th scope="col" class="resource_available">Resource Available</th>
                         <th scope="col" class="pcv_name">PCV NAME</th>
-                        <th scope="col" class="available_from">FROM</th>
-                        <th scope="col" class="available_until">TO</th>
+                        <th scope="col" class="available_until">AVAILABLE UNTIL</th>
                         <th scope="col" class="contact_way">CONTACT</th>
-                        <th scope="col" class="add_info">INFO</th>
+                        <th scope="col" class="add_info">ADDITIONAL INFO</th>
                 </tr>
         </thead>
         <tbody>
                 <?php
-                if ($opportunities == 0)
+                if (count($opportunities) == 0)
                 {
                       ?>
                         <tr><td colspan="3">Currently no Resources Available! :( </td></tr>
                         <?php
                 }
-                //foreach ($opportunities as $opportunity)
-               	//{
-                  //    $opportunity_id = $opportunity->id;
-                    //  $resource_available = $opportunity->resource_available;
-                //      $pcv_name = $opportunity->pcv_name;
-                  //    $available_from = $opportunity->available_from;
-                    ///  $available_until = $opportunity->available_until;
-                     // $contact= $opportunity->contact;
-                     // $add_info = $opportunity->add_info;
+                foreach ($opportunities as $opportunity)
+               	{
                 ?>
                 <tr>
-                        <td><?php echo "1"; ?></td>
-			<td><?php //echo $resource_available; ?></td>
-                        <td><?php //echo $pcv_name; ?></td>
-                        <td><?php //echo $available_from; ?></td>
-                        <td><?php //echo $available_until; ?></td>
-                        <td><?php //echo $contact; ?></td>
-                        <td><?php //echo $add_info; ?></td>
+                        <td><?php echo $opportunity['0']; ?></td>
+			<td><?php echo $opportunity['1']; ?></td>
+                        <td><?php echo $opportunity['3']; ?></td>
+                        <td><?php echo $opportunity['4']; ?></td>
+                        <td><?php echo $opportunity['5']; ?></td>
                 </tr>
                 <?php
-               // }
+                }
                 ?>
         </tbody>
 	<?php form::close(); ?>
