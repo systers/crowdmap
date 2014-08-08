@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for reported Incidents
+ * Model for reported Opportunities ('in search of')
  *
  *
  * PHP version 5
