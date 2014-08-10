@@ -72,11 +72,10 @@ class ListHandler extends ResponseHandler {
 			}
 		}
 
-		$message = array(
+		return array(
 			"success" => true,
 			"data" => $data
 		);
-		echo $message['data'];
 	}
 }
 ResponseRouter::getInstance()->setHandler("list", new ListHandler());
@@ -92,18 +91,16 @@ class RenameHandler extends ResponseHandler {
 		}
 
 		if(rename($root.$dir.$file, $root.$dir.$router->cleanFile($_GET['newName']))) {
-			$message = array(
+			return array(
 				"success" => true,
-				"data" => "File has been successfully renamed"
+				"data" => "File was renamed"
 			);
-			echo $message['data'];
 		}
 		else {
-			$message = array(
+			return array(
 				"success" => false,
 				"error" => "Couldn't rename the file."
 			);
-			echo $message['error'];
 		}
 	}
 }
@@ -118,11 +115,10 @@ class RemoveHandler extends ResponseHandler {
 		if (!file_exists($root.$dir.$file)) {
 			return new Response404();
 		} else if (!is_writable($root.$dir.$file)) {
-			$message = array(
+			return array(
 				'success' => false,
 				'error' => 'Don\'t have permission'
 			);
-			echo $message['error'];
 		}
 
 		$is_removed = false;
@@ -133,17 +129,15 @@ class RemoveHandler extends ResponseHandler {
 			$is_removed = unlink($root.$dir.$file);
 		}
 		if ($is_removed) {
-			$message = array(
+			return array(
 				"success" => true,
-				"data" => "File has been successfully deleted."
+				"data" => "File was successfully deleted"
 			);
-			echo $message['data'];
 		} else {
-			$message = array(
+			return array(
 				"success" => false,
 				"error" => "Couldn't delete the file."
 			);
-			echo $message['error'];
 		}
 	}
 }
@@ -159,18 +153,16 @@ class MkdirHandler extends ResponseHandler {
 			return new Response404();
 		}
 		if(mkdir($root.$dir.$newName)) {
-			$message = array(
+			return array(
 				"success" => true,
-				"data" => "Made: ".$root.$dir.$newName
+				"data" => "Created Directory: ".$root.$dir.$newName
 			);
-			echo $message['data'];
 		}
 		else {
-			$message = array(
+			return array(
 				"success" => false,
 				"error" => "Couldn't make directory."
 			);
-			echo $message['error'];
 		}
 	}
 }
@@ -187,18 +179,16 @@ class MoveHandler extends ResponseHandler {
 			return new Response404();
 		}
 		if(rename($root.$dir.$file, $root.$newPath)) {
-			$message = array(
+			return array(
 				"success" => true,
-				"data" => "File has been moved successfully"
+				"data" => "File already exists "
 			);
-			echo $message['data'];
 		}
 		else {
-			$message = array(
+			return array(
 				"success" => false,
 				"error" => "Couldn't move file."
 			);
-			echo $message['error'];
 		}
 	}
 }
@@ -213,32 +203,30 @@ class UploadHandler extends ResponseHandler {
 		if (file_exists($dst)) {
 			$message = array(
 				'success' => false,
-				'error' => sprintf('Destination file "%s" exists.', $dir . $_POST['newName'])
+				'error' => 'File already exists.'
 			);
 			echo $message['error'];
 		}
 
 		if (!is_uploaded_file($_FILES['handle']['tmp_name'])) {
-			$message = array(
+			return array(
 				'success' => false,
 				'error' => 'Couldn\'t upload file.'
 			);
-			echo $message['error'];
 		}
 
 		if (!move_uploaded_file($_FILES['handle']['tmp_name'], $dst)) {
-			$message = array(
+			return array(
 				'success' => false,
 				'error' => 'Couldn\'t upload file.'
 			);
-			echo $message['error'];
 		}
-
+		
 		$message = array(
 			'success' => true,
 			'data' => 'File upload successful.'
 		);
-		echo $message['data'];
+		echo ($message['data']);
 	}
 }
 ResponseRouter::getInstance()->setHandler("upload", new UploadHandler());

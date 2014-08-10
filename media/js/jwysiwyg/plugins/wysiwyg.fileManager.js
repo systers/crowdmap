@@ -81,12 +81,14 @@
 
 				// Wrap the file list:
 				var uiHtml = '<div class="wysiwyg-files-wrapper">' +
-								'<input type="text" name="url" />' +
+								'Title: ' +
+								'<input type="text" name="url" /> </br > </br>' +
+								'Select a file:' +
 								'<div id="wysiwyg-files-list-wrapper"></div>';
 
 				// If handler does not support upload, icon will not appear:
 				if (self.upload.enabled) {
-					uiHtml += '<div class="wysiwyg-files-action-upload" title="{{upload_action}}"></div>';
+					uiHtml += '<br>Upload a new file to Server <div class="wysiwyg-files-action-upload" title="{{upload_action}}"></div>';
 				}
 
 				// If handler does not support mkdir, icon will not appear:
@@ -325,10 +327,11 @@
 			if (!this.upload.enabled) { console.log("$.wysiwyg.fileManager: handler: move is disabled."); return false; }
 			var self = this;
 			var uiHtml = '<form enctype="multipart/form-data" method="post" action="' + self.upload.handler + '">' +
-							'<p><input type="file" name="handle" /><br>' +
+							'<p style="font-family:Helvetica; font-size:10px">Title: ' +
 							'<input type="text" name="newName" style="width:250px; border:solid 1px !important;" /><br>' +
-							'<input type="text" name="action" style="display:none;" value="upload" /><br></p>' +
-							'<input type="text" name="dir" style="display:none;" value="' + self.curDir + '" /></p>' +
+							'<input type="text" name="action" style="display:none;" value="upload" /><br>' +
+							'<input type="text" name="dir" style="display:none;" value="' + self.curDir + '" />' +
+							'<input type="file" name="handle" /></p><br>' +
 							'<input type="submit" name="submit" value="{{submit}}" />' +
 							'</form>';
 			uiHtml = self.i18n(uiHtml);
