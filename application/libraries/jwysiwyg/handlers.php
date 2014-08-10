@@ -36,11 +36,10 @@ class AuthHandler extends ResponseHandler {
 				$r[$k]["accept_ext"] = $router->getConfig()->getValidExtensions();
 			}
 		}
-		$message = array(
+		return array(
 			"success" => true,
 			"data" => $r
 		);
-		echo $message['data'];
 	}
 }
 ResponseRouter::getInstance()->setHandler("auth", new AuthHandler());
