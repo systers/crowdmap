@@ -13,8 +13,9 @@
         <?php form::open(); ?>
 	<thead>
                 <tr>
-                        <th scope="col" class="search_of">Resource Needed</th>
-                        <th scope="col" class="pcv_name">FOR INCIDENT ID</th>
+                        <th scope="col" class="report_date">Report Date</th>
+			<th scope="col" class="report_date">Report Title</th>
+			<th scope="col" class="search_for">In search of</th>
                 </tr>
         </thead>
         <tbody>
@@ -29,8 +30,9 @@
 		{
                 ?>
                 <tr>
-                        <td><?php echo $opportunity_needed['2']; ?></td>
-                        <td><?php echo $opportunity_needed['1']; ?></td>
+			<td><?php echo $opportunity_needed[1] ?></td>
+			<td><a href="<?php echo url::site() . 'reports/view/' . $opportunity_needed[0]; ?>"> <?php echo $opportunity_needed[2]; ?></a></td>
+                        <td><?php echo $opportunity_needed[3] ?></td>
                 </tr>
                 <?php
                 }
@@ -38,7 +40,7 @@
         </tbody>
 	<?php form::close(); ?>
 </table>
-<a class="more" href="<?php echo url::site() . 'opportunities/' ?>"><?php echo Kohana::lang('ui_main.view_more'); ?></a>
+<a class="more" href="<?php echo url::site() . 'opportunities/' ?>"><?php //echo Kohana::lang('ui_main.view_more'); ?></a>
 <div style="clear:both;"></div>
 			</div>
 	<div class="tt-arrow">
@@ -78,7 +80,7 @@
         </tbody>
 	<?php form::close(); ?>
 	</table>
-<a class="more" href="<?php echo url::site() . 'opportunities/' ?>"><?php echo Kohana::lang('ui_main.view_more'); ?></a>
+<a class="more" href="<?php echo url::site() . 'opportunities/' ?>"><?php //echo Kohana::lang('ui_main.view_more'); ?></a>
 <div style="clear:both;"></div>
 			</div>
 		</div>

@@ -54,15 +54,22 @@ class Opportunities_Model extends ORM {
 	{
 		// Get all opportunities
 		$opportunities_needed = array();
-		foreach
-		(
-			ORM::factory('form_response')->where('form_field_id', 5)->find_all() as $opportunity_needed)
+
+		// Database table prefix
+		$table_prefix = Kohana::config('database.default.table_prefix');
+
+		// Database instance
+		$db = new Database();
+
+		$sql = 'select incident_date, incident_title, incident.id, form_response from incident join form_response on form_response.incident_id=incident.id join form_field on form_field.form_id=incident.form_id where form_field_id=5';
+		foreach ($db->query($sql) as $opportunity_needed)
 		{
 			// Create a list of all opportunities
 			$opportunities_needed[$opportunity_needed->id] = array(
-				$opportunity_needed->form_field_id,
-				$opportunity_needed->incident_id,
-				$opportunity_needed->form_response 
+				$opportunity_needed->id,
+				$opportunity_needed->incident_date,
+				$opportunity_needed->incident_title,
+				$opportunity_needed->form_response, 
 			);
 		}
 		return $opportunities_needed;

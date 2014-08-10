@@ -86,9 +86,9 @@ class Opportunities_Controller extends Main_Controller {
 
 			// Add some rules, the input field, followed by a list of checks, carried out in order
 			$post->add_rules('resource_available', 'required', 'length[3,50]');
-			$post->add_rules('pcv_name', 'required', 'length[3,20]');
-			$post->add_rules('available_from', 'required', 'length[3,10]');
-			$post->add_rules('available_until', 'required', 'length[3,10]');
+			$post->add_rules('pcv_name', 'required',  'length[3,20]');
+			$post->add_rules('available_from', 'required', 'date_mmddyyyy', 'length[3,10]');
+			$post->add_rules('available_until', 'required', 'date_mmddyyyy', 'length[3,10]');
 			$post->add_rules('contact', 'required', 'length[3,20]');
 			$post->add_rules('add_info', 'required', 'length[3,50]');
 
@@ -105,6 +105,9 @@ class Opportunities_Controller extends Main_Controller {
 				$opportunities->contact = $post->contact;
 				$opportunities->add_info = $post->add_info;			
 				$opportunities->save(); 
+
+			
+				url::redirect('opportunities/thanks');
 			}
 			// No! We have validation errors, we need to show the form again, with the errors
 			else
@@ -121,5 +124,19 @@ class Opportunities_Controller extends Main_Controller {
 		$this->template->content->form = $form;
 		$this->template->content->errors = $errors;
 		$this->template->content->form_error = $form_error;
+	}
+
+		// Inline Javascript
+	//	$this->template->content->date_picker_js = $this->_date_picker_js();
+
+	/**
+	 * Opportunities Thanks Page
+	 */
+	public function thanks()
+	{
+		$this->template->header->this_page = 'opportunities_submit';
+		$this->template->content = new View('opportunities/submit_thanks');
+		// Get Site Email
+		$this->template->content->report_email = Kohana::config('settings.site_email');
 	}
 }

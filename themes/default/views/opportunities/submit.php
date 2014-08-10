@@ -31,10 +31,10 @@
 				<h4><?php echo form::label('pcv_name', 'PCV Name'); ?>:</h4><br />
 				<?php print form::input('pcv_name', $form['pcv_name'], 'class="text"'); ?></div>
 			<div class="report_row">
-				<h4><?php echo form::label('available_from', 'Available From'); ?>:</h4><br />
+				<h4><?php echo form::label('available_from', 'Available From'); ?>:</h4><span><?php echo Kohana::lang('ui_main.date_format');?></span></br >
 				<?php print form::input('available_from', $form['available_from'], 'class="text"'); ?></div>
 			<div class="report_row">
-				<h4><?php echo form::label('available_until', 'Available Until'); ?>:</h4><br />
+				<h4><?php echo form::label('available_until', 'Available Until'); ?>:</h4><span><?php echo Kohana::lang('ui_main.date_format');?></span></br >
 				<?php print form::input('available_until', $form['available_until'], ' class="text"'); ?></div>
 			<div class="report_row">
 				<h4><?php echo form::label('way_to_contact', 'Best way to Contact'); ?>:</strong><br />
