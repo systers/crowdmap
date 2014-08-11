@@ -35,7 +35,7 @@
 	// Map object
 	var map = null;
 	var radiusMap = null;
-	
+
 	if (urlParameters.length == 0)
 	{
 		urlParameters = {};
@@ -76,7 +76,6 @@
 		$(".btn-change-time").click(function(){
 			$("#tooltip-box").css({
 				'left': ($(this).offset().left - 80),
-				'top': ($(this).offset().right)
 			}).toggle();
 			
 	        return false;
@@ -246,51 +245,6 @@
 			fetchReports();
 		});
 		
-		// GeoCode
-			$('.btn_find').on('click', function () {
-				geoCode();
-			});
-			$('#location_find').bind('keypress', function(e) {
-				var code = (e.keyCode ? e.keyCode : e.which);
-				if(code == 13) { //Enter keycode
-					geoCode();
-					return false;
-				}
-			});
-			
-			// Event on Latitude/Longitude Typing Change
-			$('#latitude, #longitude').bind("blur", function() {
-				var newlat = $("#latitude").val();
-				var newlon = $("#longitude").val();
-				// Do nothing if either field is empty.
-				if (newlat == '' || newlon == '') return;
-				if (!isNaN(newlat) && !isNaN(newlon))
-				{
-					// Clear the map first
-					vlayer.removeFeatures(vlayer.features);
-					$('input[name="geometry[]"]').remove();
-					
-					point = new OpenLayers.Geometry.Point(newlon, newlat);
-					OpenLayers.Projection.transform(point, proj_4326,proj_900913);
-					
-					f = new OpenLayers.Feature.Vector(point);
-					vlayer.addFeatures(f);
-					
-					// create a new lat/lon object
-					myPoint = new OpenLayers.LonLat(newlon, newlat);
-					myPoint.transform(proj_4326, map.getProjectionObject());
-
-					// display the map centered on a latitude and longitude
-					map.panTo(myPoint);
-				}
-				else
-				{
-					// Commenting this out as its horribly annoying
-					//alert('Invalid value!');
-				}
-			});
-		
-
 		$("#accordion").accordion({change: function(event, ui){
 			if ($(ui.newContent).hasClass("f-location-box"))
 			{
@@ -308,7 +262,7 @@
 					radiusMap.events.register("click", radiusMap, function(e){
 						var lonlat = radiusMap.getLonLatFromViewPortPx(e.xy);
 						var lonlat2 = radiusMap.getLonLatFromViewPortPx(e.xy);
-					    m = new OpenLayers.Marker(lonlat);
+					    	m = new OpenLayers.Marker(lonlat);
 						markers.clearMarkers();
 						markers.addMarker(m);
 
@@ -328,6 +282,16 @@
 						urlParameters["start_loc"] = currLat + "," + currLon;
 					});
 
+					//Initiate geoCode
+                			$('.btn_find').on('click', function () {
+                        			geoCode();
+                			});
+					
+					var markers = new OpenLayers.Layer.Markers("Markers");
+    					map.addLayer(markers);
+    
+    					map.setCenter(new OpenLayers.LonLat(0, 0), 6);
+					
 					// Radius selector
 					$("select#alert_radius").change(function(e, ui) {
 						var newRadius = $("#alert_radius").val();
@@ -351,7 +315,7 @@
 
 
 	});
-	
+
 	/**
 	 * Registers the report hover event
 	 */
@@ -995,62 +959,37 @@
 		delete urlParameters[parameterKey];
 	}
 
+	//});
+//});
+
 /**
-		 * Google GeoCoder
-		 */
-		function geoCode()
-		{
-			$('#find_loading').html('<img src="<?php echo url::file_loc('img')."media/img/loading_g.gif"; ?>">');
-			address = $("#location_find").val();
-			$.post("<?php echo url::site() . 'reports/geocode/' ?>", { address: address },
-				function(data){
-					if (data.status == 'success'){
-						// Clear the map first
-						vlayer.removeFeatures(vlayer.features);
-						$('input[name="geometry[]"]').remove();
-						
-						point = new OpenLayers.Geometry.Point(data.longitude, data.latitude);
-						OpenLayers.Projection.transform(point, proj_4326,proj_900913);
-						
-						f = new OpenLayers.Feature.Vector(point);
-						vlayer.addFeatures(f);
-						
-						// create a new lat/lon object
-						myPoint = new OpenLayers.LonLat(data.longitude, data.latitude);
-						myPoint.transform(proj_4326, map.getProjectionObject());
+ * Google GeoCoder
+ */
+function geoCode() {
+	$('#find_loading').html('<img src="<?php echo url::file_loc('img')."media/img/loading_g.gif"; ?>">');
+	address = $("#location_find").val();
+	$.post("<?php echo url::site(); ?>reports/geocode/", { address: address },
+		function(data){
+			if (data.status == 'success') {
+				alert('bla');
+				markers.clearMarkers();
+				var lonlat = new OpenLayers.LonLat(data.longitude, data.latitude);
+				alert(lonlat).val();
+				var marker = new OpenLayers.Marker(lonlat);
+				alert(marker).val();
+				markers.addMarkers(marker);
+				alert(marker).val();
+				});
+			} else {
+				// Alert message to be displayed
+				var alertMessage = address + " not found!\n\n***************************\n" +
+				    "Enter more details like city, town, country\nor find a city or town " +
+				    "close by and zoom in\nto find your precise location";
 
-						// display the map centered on a latitude and longitude
-						map.panTo(myPoint);
-												
-						// Update form values
-						$("#country_name").val(data.country);
-						$("#latitude").val(data.latitude);
-						$("#longitude").val(data.longitude);
-						$("#location_name").val(data.location_name);
-					} else {
-						// Alert message to be displayed
-						var alertMessage = address + " not found!\n\n***************************\n" + 
-						    "Enter more details like city, town, country\nor find a city or town " +
-						    "close by and zoom in\nto find your precise location";
+				alert(alertMessage)
+			}
+			$('#find_loading').html('');
+		}, "json");
+	return false;
+}
 
-						alert(alertMessage)
-					}
-					$('div#find_loading').html('');
-				}, "json");
-			return false;
-		}
-
-		
-		// Reverse GeoCoder
-		function reverseGeocode(latitude, longitude) {		
-			var latlng = new google.maps.LatLng(latitude, longitude);
-			var geocoder = new google.maps.Geocoder();
-			geocoder.geocode({'latLng': latlng}, function(results, status){
-				if (status == google.maps.GeocoderStatus.OK) {
-					var country = results[results.length - 1].formatted_address;
-					$("#country_name").val(country);
-				} else {
-					console.log("Geocoder failed due to: " + status);
-				}
-			});
-		}
