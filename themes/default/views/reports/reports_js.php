@@ -963,33 +963,32 @@
 //});
 
 /**
- * Google GeoCoder
- */
+* Google GeoCoder
+*/
 function geoCode() {
 	$('#find_loading').html('<img src="<?php echo url::file_loc('img')."media/img/loading_g.gif"; ?>">');
 	address = $("#location_find").val();
-	$.post("<?php echo url::site(); ?>reports/geocode/", { address: address },
+	$.post("<?php echo url::site() . 'reports/geocode/' ?>", { address: address },
 		function(data){
-			if (data.status == 'success') {
-				alert('bla');
+                        if (data.status == 'success') {
+			// Clear the map first
+				alert('FOUND LOCATION!');
 				markers.clearMarkers();
+				alert('CLEARED MARKERS!');
 				var lonlat = new OpenLayers.LonLat(data.longitude, data.latitude);
-				alert(lonlat).val();
+				alert('FOUND COORDINATES!');
 				var marker = new OpenLayers.Marker(lonlat);
-				alert(marker).val();
-				markers.addMarkers(marker);
-				alert(marker).val();
-				});
+				alert('SET MARKER!');
+				markers.addMarkers(markers);
+ 
 			} else {
-				// Alert message to be displayed
-				var alertMessage = address + " not found!\n\n***************************\n" +
-				    "Enter more details like city, town, country\nor find a city or town " +
-				    "close by and zoom in\nto find your precise location";
-
-				alert(alertMessage)
-			}
-			$('#find_loading').html('');
-		}, "json");
-	return false;
-}
-
+                                // Alert message to be displayed
+                                var alertMessage = address + " not found!\n\n***************************\n" +
+                                    "Enter more details like city, town, country\nor find a city or town " +
+                                    "close by and zoom in\nto find your precise location";
+                                alert(alertMessage)
+                        }
+                        $('#find_loading').html('');
+                }, "json");
+        return false;
+};
