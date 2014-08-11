@@ -252,8 +252,8 @@ jQuery(function() {
 	}); }, 800);
 
 	function incidentZoom(event) {
-		if (map.getZoom() < <?php echo $default_zoom; ?>) {
-			map.zoomTo(<?php echo $default_zoom; ?>);
+		if (map.getZoom() < <?php echo Kohana::config('settings.default_zoom'); ?>) {
+			map.zoomTo(<?php echo Kohana::config('settings.default_zoom'); ?>);
                         }       
                 }
 	
