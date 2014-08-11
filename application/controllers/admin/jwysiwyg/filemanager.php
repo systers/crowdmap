@@ -42,7 +42,7 @@ class FileManager_Controller extends Admin_Controller {
 				$error = 'Folder "' . $uploads_access_dir . '" doesn\'t exists.';
 		
 				header('Content-type: text/html; charset=UTF-8');
-				print('{"error":"config.php: ' . htmlentities($error) . '","success":false}');
+				print_r('{"error":"config.php: ' . htmlentities($error) . '","success":false}');
 				exit();
 			}
 		}

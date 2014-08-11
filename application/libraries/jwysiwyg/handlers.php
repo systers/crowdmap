@@ -93,7 +93,7 @@ class RenameHandler extends ResponseHandler {
 		if(rename($root.$dir.$file, $root.$dir.$router->cleanFile($_GET['newName']))) {
 			return array(
 				"success" => true,
-				"data" => "message .. "
+				"data" => "File was renamed"
 			);
 		}
 		else {
@@ -131,7 +131,7 @@ class RemoveHandler extends ResponseHandler {
 		if ($is_removed) {
 			return array(
 				"success" => true,
-				"data" => "message .. "
+				"data" => "File was successfully deleted"
 			);
 		} else {
 			return array(
@@ -155,7 +155,7 @@ class MkdirHandler extends ResponseHandler {
 		if(mkdir($root.$dir.$newName)) {
 			return array(
 				"success" => true,
-				"data" => "Made: ".$root.$dir.$newName
+				"data" => "Created Directory: ".$root.$dir.$newName
 			);
 		}
 		else {
@@ -181,7 +181,7 @@ class MoveHandler extends ResponseHandler {
 		if(rename($root.$dir.$file, $root.$newPath)) {
 			return array(
 				"success" => true,
-				"data" => "message .. "
+				"data" => "File already exists "
 			);
 		}
 		else {
@@ -201,10 +201,11 @@ class UploadHandler extends ResponseHandler {
 		$dst = $root . $dir . $_POST['newName'];
 
 		if (file_exists($dst)) {
-			return array(
+			$message = array(
 				'success' => false,
-				'error' => sprintf('Destination file "%s" exists.', $dir . $_POST['newName'])
+				'error' => 'File already exists.'
 			);
+			echo $message['error'];
 		}
 
 		if (!is_uploaded_file($_FILES['handle']['tmp_name'])) {
@@ -220,11 +221,12 @@ class UploadHandler extends ResponseHandler {
 				'error' => 'Couldn\'t upload file.'
 			);
 		}
-
-		return array(
+		
+		$message = array(
 			'success' => true,
 			'data' => 'File upload successful.'
 		);
+		echo ($message['data']);
 	}
 }
 ResponseRouter::getInstance()->setHandler("upload", new UploadHandler());

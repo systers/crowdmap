@@ -58,7 +58,7 @@
 
 			if ($.wysiwyg.fileManager && $.wysiwyg.fileManager.ready) {
 				// Add the File Manager icon:
-				formImageHtml += '<div class="wysiwyg-fileManager" title="{fileManagerIcon}"/>';
+				formImageHtml += '{fileManagerIcon}:<div class="wysiwyg-fileManager" title="{fileManagerIcon}"/>';
 			}
 
 			formImageHtml += '</div></div>' +
