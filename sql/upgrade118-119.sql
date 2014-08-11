@@ -1,3 +1,6 @@
+-- Update DB Version --
+UPDATE 'settings' SET 'value' = '118' WHERE 'key' = 'db_version';
+
 /**
  * Table structure for table `opportunities`
  *
