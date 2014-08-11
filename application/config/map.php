@@ -17,7 +17,7 @@ $config['marker_radius'] = "4";
  * Values from 1 (very transparent) to 10 (Opaque)
  * Default: 8
  */
-$config['marker_opacity'] = "8";
+$config['marker_opacity'] = "10";
 
 
 /**

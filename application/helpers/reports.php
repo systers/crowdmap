@@ -110,7 +110,8 @@ class reports_Core {
 		}
 		
 		// Validate photo uploads
-		$post->add_rules('incident_photo', 'upload::valid', 'upload::type[gif,jpg,png,jpeg]', 'upload::size[2M]');
+		$max_upload_size = Kohana::config('settings.max_upload_size');
+		$post->add_rules('incident_photo', 'upload::valid', 'upload::type[gif,jpg,png,jpeg]', "upload::size[".$max_upload_size."M]");
 
 
 		// Validate Personal Information
@@ -760,7 +761,7 @@ class reports_Core {
 		
 		// Split selected parameters on ","
 		// For simplicity, always turn them into arrays even theres just one value
-		$exclude_params = array('c', 'v', 'm', 'mode', 'sw', 'ne', 'start_loc');
+		$exclude_params = array('c', 'v', 'm', 't', 'mode', 'sw', 'ne', 'start_loc');
 		foreach ($url_data as $key => $value)
 		{
 			if (in_array($key, $exclude_params) AND ! is_array($value))
@@ -796,6 +797,32 @@ class reports_Core {
 				);
 			}
 		}
+		
+		// Incident status
+		// 
+		if (isset($url_data['t']) AND is_array($url_data['t']))
+		{
+			$incident_status = array();
+			
+			// Sanitize the modes
+			foreach ($url_data['t'] as $status)
+			{
+				if (intval($status) >= 0)
+				{
+					$incident_status[] = intval($status);
+				}
+			}
+			
+			// Check if any modes exist and add them to the parameter list
+			if (count($incident_status) > 0)
+			{
+				array_push(self::$params, 
+					'i.incident_active IN ('.implode(",", $incident_status).')'
+				);
+			}
+		}
+
+		// 
 		
 		// 
 		// Incident modes
