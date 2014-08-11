@@ -52,7 +52,7 @@ class Opportunities_Controller extends Main_Controller {
 		$this->template->header->this_page = 'opportunities_submit';
 		$this->template->content = new View('opportunities/submit');
 
-		$this->template->header->page_title .= Kohana::lang('ui_main.opportunities_submit_new')
+		$this->template->header->page_title .= Kohana::lang('ui_main.opportunities_submit')
 											   .Kohana::config('settings.title_delimiter');
 
 		//Retrieve API URL
@@ -134,7 +134,9 @@ class Opportunities_Controller extends Main_Controller {
 	 */
 	public function thanks()
 	{
-		$this->template->header->this_page = 'opportunities_submit';
+		$this->template->header->this_page = 'opportunities_submitted';
+		$this->template->header->page_title .= Kohana::lang('ui_main.opportunities')
+                                                                                           .Kohana::config('settings.title_delimiter');
 		$this->template->content = new View('opportunities/submit_thanks');
 		// Get Site Email
 		$this->template->content->report_email = Kohana::config('settings.site_email');

@@ -2,20 +2,20 @@
 	<div class="content-bg">
 		<!-- start block -->
 		<div class="big-block">
-			<h1>Opportunities</h1>
+		<h1><?php echo Kohana::lang('ui_main.opportunities'); ?></h1>
 				<form action="opportunities/submit">
-                        	<input id="btn-submit-opportunities" class="btn_submit" type="submit" value="Submit a new Opportunity" />
+                        	<input id="btn-submit-opportunities" class="btn_submit" type="submit" value="<?php echo Kohana::lang('ui_main.opportunities_submit'); ?>" />
                         	</form><br /><br />
 			<div id="opportunities_form" class="opportunities">
 			<div class="tt-arrow">
-	<h2 class="heading">In Search of</h2>
+	<h2 class="heading"><?php echo Kohana::lang('ui_main.search_of'); ?></h2>
 	<table class="table-list">
         <?php form::open(); ?>
 	<thead>
                 <tr>
-                        <th scope="col" class="report_date">Report Date</th>
-			<th scope="col" class="report_date">Report Title</th>
-			<th scope="col" class="search_for">In search of</th>
+                        <th scope="col" class="search_of_row"><?php echo Kohana::lang('ui_main.date'); ?></th>
+			<th scope="col" class="search_of_row"><?php echo Kohana::lang('ui_main.report_title'); ?></th>
+			<th scope="col" class="search_of_row"><?php echo Kohana::lang('ui_main.search_of'); ?></th>
                 </tr>
         </thead>
         <tbody>
@@ -23,7 +23,7 @@
               if (count($opportunities_needed) == 0)
               {
                         ?>
-                        <tr><td colspan="3">Currently no Resources Needed!</td></tr>
+                        <tr><td colspan="3"><?php echo Kohana::lang('ui_main.no_opportunities_needed'); ?></td></tr>
                         <?php
               }
               foreach ($opportunities_needed as $opportunity_needed)
@@ -44,16 +44,16 @@
 <div style="clear:both;"></div>
 			</div>
 	<div class="tt-arrow">
-	<h2 class="heading">Resources Available</h2>
+	<h2 class="heading"><?php echo Kohana::lang('ui_main.resources_available'); ?></h2>
 	<table class="table-list">
         <?php form::open(); ?>
 	<thead>
                 <tr>
-                        <th scope="col" class="resource_available">Resource Available</th>
-                        <th scope="col" class="pcv_name">PCV NAME</th>
-                        <th scope="col" class="available_until">AVAILABLE UNTIL</th>
-                        <th scope="col" class="contact_way">CONTACT</th>
-                        <th scope="col" class="add_info">ADDITIONAL INFO</th>
+                        <th scope="col" class="resources_available_row"><?php echo Kohana::lang('ui_main.resource_available'); ?></th>
+                        <th scope="col" class="resources_available_row"><?php echo Kohana::lang('ui_main.pcv_name'); ?></th>
+                        <th scope="col" class="resources_available_row"><?php echo Kohana::lang('ui_main.available_until'); ?></th>
+                        <th scope="col" class="resources_available_row"><?php echo Kohana::lang('ui_main.contact_way'); ?></th>
+                        <th scope="col" class="resources_available_row"><?php echo Kohana::lang('ui_main.add_info'); ?></th>
                 </tr>
         </thead>
         <tbody>
@@ -61,7 +61,7 @@
                 if (count($opportunities) == 0)
                 {
                       ?>
-                        <tr><td colspan="3">Currently no Resources Available! :( </td></tr>
+                        <tr><td colspan="3"><?php echo Kohana::lang('ui_main.no_resources_available'); ?></td></tr>
                         <?php
                 }
                 foreach ($opportunities as $opportunity)

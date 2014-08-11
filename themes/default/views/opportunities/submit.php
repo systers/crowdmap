@@ -22,25 +22,43 @@
 					<?php
 				}
 			?>
-		<h1>Submit a new Resource</h1><br />
+		<h1><?php echo Kohana::lang('ui_main.opportunities_submit'); ?> </h1><br />
 			<?php print form::open(NULL, array('id' => 'opportunitiesForm', 'name' => 'opportunitiestForm')); ?>
 			<div class="report_row">
-				<h4><?php echo form::label('resource_available', 'Resource Available'); ?>:</h4><br />
+				<h4><?php echo Kohana::lang('ui_main.resource_available'); ?> :</h4><br />
 				<?php print form::input('resource_available', $form['resource_available'], 'class="text"'); ?></div>
 			<div class="report_row">
-				<h4><?php echo form::label('pcv_name', 'PCV Name'); ?>:</h4><br />
+				<h4><?php echo Kohana::lang('ui_main.pcv_name'); ?> :</h4><br />
 				<?php print form::input('pcv_name', $form['pcv_name'], 'class="text"'); ?></div>
 			<div class="report_row">
-				<h4><?php echo form::label('available_from', 'Available From'); ?>:</h4><span><?php echo Kohana::lang('ui_main.date_format');?></span></br >
+				<h4><?php echo Kohana::lang('ui_main.available_from'); ?>:</h4><span><?php echo Kohana::lang('ui_main.date_format');?></span></br >
 				<?php print form::input('available_from', $form['available_from'], 'class="text"'); ?></div>
+				<script type="text/javascript">
+                                                        $().ready(function() {
+                                                                $("#available_from").datepicker({ 
+                                                                        showOn: "both", 
+                                                                        buttonImage: "<?php echo url::file_loc('img'); ?>media/img/icon-calendar.gif", 
+                                                                        buttonImageOnly: true 
+                                                                });
+                                                        });
+				</script>
 			<div class="report_row">
-				<h4><?php echo form::label('available_until', 'Available Until'); ?>:</h4><span><?php echo Kohana::lang('ui_main.date_format');?></span></br >
+				<h4><?php echo Kohana::lang('ui_main.available_until'); ?>:</h4><span><?php echo Kohana::lang('ui_main.date_format');?></span></br >
 				<?php print form::input('available_until', $form['available_until'], ' class="text"'); ?></div>
+				<script type="text/javascript">
+                                                        $().ready(function() {
+                                                                $("#available_until").datepicker({ 
+                                                                        showOn: "both", 
+                                                                        buttonImage: "<?php echo url::file_loc('img'); ?>media/img/icon-calendar.gif", 
+                                                                        buttonImageOnly: true 
+                                                                });
+                                                        });
+                                </script>
 			<div class="report_row">
-				<h4><?php echo form::label('way_to_contact', 'Best way to Contact'); ?>:</strong><br />
+				<h4><?php echo Kohana::lang('ui_main.contact_way'); ?>:</strong><br />
 				<?php print form::textarea('contact', $form['contact'], '"rows="5" cols="40" class="textarea long"'); ?></div>
 			<div class="report_row">
-				<h4><?php echo form::label('additional_info', 'Additional Information'); ?>:</h4><br />
+				<h4><?php echo Kohana::lang('ui_main.add_info'); ?>:</h4><br />
 				<?php print form::textarea('add_info', $form['add_info'], ' "rows="5" cols="40" class="textarea long"'); ?></div>
 		</div>
 
