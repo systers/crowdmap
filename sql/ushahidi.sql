@@ -1382,7 +1382,7 @@ VALUES
   (30,'default_city','nairobi'),
   (31,'default_lat','-1.2873000707050097'),
   (32,'default_lon','36.821451182008204'),
-  (33,'default_zoom','13'),
+  (33,'default_zoom','7'),
   (34,'items_per_page','5'),
   (35,'items_per_page_admin','20'),
   (36,'sms_provider',''),

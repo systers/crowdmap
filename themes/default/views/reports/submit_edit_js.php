@@ -84,7 +84,9 @@
 			
 			<?php echo map::layers_js(FALSE); ?>
 			map.addLayers(<?php echo map::layers_array(FALSE); ?>);
-			map.addControl(new OpenLayers.Control.Navigation());
+			map.addControl(new OpenLayers.Control.Navigation({
+				'zoomWheelEnabled': false
+			}));
 			map.addControl(new OpenLayers.Control.Zoom());
 			map.addControl(new OpenLayers.Control.MousePosition({
 				formatOutput: Ushahidi.convertLongLat
@@ -950,8 +952,12 @@
 		
 		function incidentZoom(event) {
 			$("#incident_zoom").val(map.getZoom());
+
+			if (map.getZoom() < <?php echo $default_zoom ?>) {
+				map.zoomTo(<?php echo $default_zoom ?>);
+			}	
 		}
-		
+
 		function updateFeature(feature, color, strokeWidth){
 		
 			// Create a symbolizer from exiting stylemap

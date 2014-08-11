@@ -31,7 +31,8 @@
 				'displayProjection': proj_4326,
 				maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34, 
 				                                 20037508.34, 20037508.34),
-				maxResolution: 156543.0339
+				maxResolution: 156543.0339,
+				eventListeners: { "zoomend": incidentZoom}
 			};
 		}
 
@@ -47,7 +48,7 @@
 		if (typeof controls == "undefined" || controls == null) {
 			// Set the controls for the map options
 			map.addControls([
-				new OpenLayers.Control.Navigation({ dragPanOptions: { enableKinetic: true } }),
+				new OpenLayers.Control.Navigation( { 'zoomWheelEnabled': false }),
 				new OpenLayers.Control.Zoom(),
 				new OpenLayers.Control.Attribution(),
 				new OpenLayers.Control.MousePosition({
@@ -74,6 +75,16 @@
 		// Return
 		return map;
 	}
+
+	/**
+	 * Only Zoom Out until Default Zoom
+	 */
+
+	 function incidentZoom(event) {
+			if (map.getZoom() < <?php echo Kohana::config('settings.default_zoom'); ?>) {
+				map.zoomTo(<?php echo Kohana::config('settings.default_zoom');?>);
+			}	
+		}
 		
 	/**
 	 * Creates a radius layer and adds it on the map object
