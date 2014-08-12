@@ -108,18 +108,7 @@
                                 <div class="report_row" id="custom_field_row_0"><h4><?php echo Kohana::lang('ui_main.keywords'); ?></h4>
 								<?php echo form::input('custom_field_0', '' , ' class="text custom_text"'); ?>
                                 </div>
-				 <div class="report_row" id="custom_field_row_1"><h4><?php echo Kohana::lang('ui_main.pcv_name'); ?></h4>
-                                                                <?php echo form::input('custom_field_1', '' , ' class="text custom_text"'); ?>
-                                </div>
-				 <div class="report_row" id="custom_field_row_2"><h4><?php echo Kohana::lang('ui_main.director_name'); ?></h4>
-                                                                <?php echo form::input('custom_field_2', '' , ' class="text custom_text"'); ?>
-                                </div>
-				 <div class="report_row" id="custom_field_row_3"><h4><?php echo Kohana::lang('ui_main.counterpart_name'); ?></h4>
-                                                                <?php echo form::input('custom_field_3', '' , ' class="text custom_text"'); ?>
-                                </div>
-				 <div class="report_row" id="custom_field_row_0"><h4><?php echo Kohana::lang('ui_main.contact_person'); ?></h4>
-                                                                <?php echo form::input('custom_field_4', '' , ' class="text custom_text"'); ?>
-                                </div>
+								<?php echo $custom_forms_filter;?>
 								<?php echo form::close(); ?> 
                             </div>
 	

@@ -44,6 +44,12 @@
 	$(document).ready(function() {
 	
 		//only show Fields for PCV Name, Contact Person, Counterpart Name, Director Name 	
+		$("input[id^='custom_field_1']:text").val("");	
+		$("input[id^='custom_field_2']:text").val("");
+		$("input[id^='custom_field_3']:text").val("");
+		$("input[id^='custom_field_4']:text").val("");
+		$("input[id^='custom_field_5']:text").parent().remove();
+
 		$("select[id^='custom_field_']").prepend('<option value="---NOT_SELECTED---"><?php echo Kohana::lang("ui_main.not_selected"); ?></option>');
 		$("select[id^='custom_field_']").val("---NOT_SELECTED---");
 		$("input[id^='custom_field_']:checkbox").removeAttr("checked");
@@ -979,8 +985,8 @@ function geoCode() {
 				alert('FOUND COORDINATES!');
 				var marker = new OpenLayers.Marker(lonlat);
 				alert('SET MARKER!');
-				markers.addMarkers(markers);
- 
+				map.setCenter(lonlat,3);
+				markers.addMarker(markers);
 			} else {
                                 // Alert message to be displayed
                                 var alertMessage = address + " not found!\n\n***************************\n" +
