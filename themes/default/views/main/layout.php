@@ -238,17 +238,6 @@
 							<li><a id="media_2" href="#"><span><?php echo Kohana::lang('ui_main.video'); ?></span></a></li>
 						</ul>
 					</div>
-						</br >
-						</br >
-					<div class="status-filters">
-						<strong><?php echo Kohana::lang('ui_main.filters'); ?></strong>	
-						<ul>
-                            				<li><a id="incident_active_" class="active" href="#"><span><?php echo Kohana::lang('ui_main.all'); ?></span></a></li>
-							<li><a id="incident_active_0" href="#"><span><?php echo Kohana::lang('ui_main.inactive'); ?></span></a></li>
-                            				<li><a id="incident_active_1" href="#"><span><?php echo Kohana::lang('ui_main.active'); ?></span></a></li>
-						</ul>
-					</div>
-				</div>
 
 
 					<?php
