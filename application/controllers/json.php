@@ -81,17 +81,7 @@ class Json_Controller extends Template_Controller {
 	 * @param string $type type of geojson to generate. Valid options are: 'clusters' and 'markers'
 	 **/
 	protected function geojson($type)
-	{
-		$color = Kohana::config('settings.default_map_all');
-		$icon = "";
-		$markers = FALSE;
-		
-		if (Kohana::config('settings.default_map_all_icon_id'))
-		{
-			$icon_object = ORM::factory('media')->find(Kohana::config('settings.default_map_all_icon_id'));
-			$icon = url::convert_uploaded_to_abs($icon_object->media_medium);
-		}
-		
+	{	
 		// Category ID
 		$category_id = (isset($_GET['c']) AND intval($_GET['c']) > 0) ? intval($_GET['c']) : 0;
 		// Get the category colour
