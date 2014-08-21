@@ -85,5 +85,6 @@
 			</div>
 		</div>
 		<!-- end block -->
+		</div>
 	</div>
 </div>
