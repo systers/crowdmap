@@ -25,6 +25,13 @@ class Opportunities_Controller extends Main_Controller {
 	 */
 	public function index()
 	{
+
+		// Are we allowed to view and submit opportunities??
+		if ( ! Kohana::config('settings.allow_opportunities'))
+		{
+			url::redirect(url::site().'main');
+		}
+
 		$this->template->header->this_page = 'opportunities';
 		$this->template->content = new View('opportunities/main');
 		$this->template->header->page_title .= Kohana::lang('ui_main.opportunities').Kohana::config('settings.title_delimiter');

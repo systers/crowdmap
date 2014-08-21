@@ -141,6 +141,12 @@
 								<?php print form::dropdown('allow_alerts', $yesno_array, $form['allow_alerts']); ?>
 							</span>
 						</div>
+						<div class="row">
+							<h4><a href="#" class="tooltip" title="<?php echo Kohana::lang("tooltips.settings_allow_opportunities"); ?>"><?php echo Kohana::lang('settings.site.allow_opportunities');?></a></h4>
+							<span class="sel-holder">
+								<?php print form::dropdown('allow_opportunities', $yesno_array, $form['allow_opportunities']); ?>
+							</span>
+						</div>
 						<div class="row" id="alerts_selector">
 							<h4><a href="#" class="tooltip" title="<?php echo Kohana::lang("tooltips.settings_alert_email"); ?>"><?php echo Kohana::lang('settings.site.email_alerts');?></a></h4>
 							<?php print form::input('alerts_email', $form['alerts_email'], ' class="text long2"', 'id = alert_email'); ?>
