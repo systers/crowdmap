@@ -35,7 +35,7 @@
 	// Map object
 	var map = null;
 	var radiusMap = null;
-	
+
 	if (urlParameters.length == 0)
 	{
 		urlParameters = {};
@@ -43,19 +43,26 @@
 	
 	$(document).ready(function() {
 	
-	
-		//add Not Selected values to the custom form fields that are drop downs
+		//only show Fields for PCV Name, Contact Person, Counterpart Name, Director Name 	
+		$("input[id^='custom_field_1']:text").val("");	
+		$("input[id^='custom_field_2']:text").val("");
+		$("input[id^='custom_field_3']:text").val("");
+		$("input[id^='custom_field_4']:text").val("");
+		$("input[id^='custom_field_5']:text").parent().remove();
+
 		$("select[id^='custom_field_']").prepend('<option value="---NOT_SELECTED---"><?php echo Kohana::lang("ui_main.not_selected"); ?></option>');
 		$("select[id^='custom_field_']").val("---NOT_SELECTED---");
 		$("input[id^='custom_field_']:checkbox").removeAttr("checked");
 		$("input[id^='custom_field_']:radio").removeAttr("checked");
 		$("input[id^='custom_field_']:text").val("");
+		
 		// Only show text input fields - should really replace with a keyword search field
+		// Hide textareas, checkboxes, radio boxes  - should really replace with a keyword search field
 		$("textarea[id^='custom_field_']").parent().remove();
 		$("input[id^='custom_field_']:radio").parent().remove();
 		$("input[id^='custom_field_']:checkbox").parent().remove();
 		$("select[id^='custom_field_']").parent().remove;
-  
+
 		// "Choose Date Range"" Datepicker
 		// JP: Added changeYear API option.
 		var dates = $( "#report_date_from, #report_date_to" ).datepicker({
@@ -82,7 +89,6 @@
 		$(".btn-change-time").click(function(){
 			$("#tooltip-box").css({
 				'left': ($(this).offset().left - 80),
-				'top': ($(this).offset().right)
 			}).toggle();
 			
 	        return false;
@@ -269,7 +275,7 @@
 					radiusMap.events.register("click", radiusMap, function(e){
 						var lonlat = radiusMap.getLonLatFromViewPortPx(e.xy);
 						var lonlat2 = radiusMap.getLonLatFromViewPortPx(e.xy);
-					    m = new OpenLayers.Marker(lonlat);
+					    	m = new OpenLayers.Marker(lonlat);
 						markers.clearMarkers();
 						markers.addMarker(m);
 
@@ -289,6 +295,16 @@
 						urlParameters["start_loc"] = currLat + "," + currLon;
 					});
 
+					//Initiate geoCode
+                			$('.btn_find').on('click', function () {
+                        			geoCode();
+                			});
+					
+					var markers = new OpenLayers.Layer.Markers("Markers");
+    					map.addLayer(markers);
+    
+    					map.setCenter(new OpenLayers.LonLat(0, 0), 6);
+					
 					// Radius selector
 					$("select#alert_radius").change(function(e, ui) {
 						var newRadius = $("#alert_radius").val();
@@ -312,7 +328,7 @@
 
 
 	});
-	
+
 	/**
 	 * Registers the report hover event
 	 */
@@ -954,4 +970,33 @@
 		// Remove the parameter key from urlParameters
 		delete urlParameters[parameterKey];
 	}
-	
+
+	//});
+//});
+
+/**
+* Google GeoCoder
+*/
+function geoCode() {
+	$('#find_loading').html('<img src="<?php echo url::file_loc('img')."media/img/loading_g.gif"; ?>">');
+	address = $("#location_find").val();
+	$.post("<?php echo url::site() . 'reports/geocode/' ?>", { address: address },
+		function(data){
+                        if (data.status == 'success') {
+			// Clear the map first
+				markers.clearMarkers();
+				var lonlat = new OpenLayers.LonLat(data.longitude, data.latitude);
+				var marker = new OpenLayers.Marker(lonlat);
+				map.setCenter(lonlat,3);
+				markers.addMarker(markers);
+			} else {
+                                // Alert message to be displayed
+                                var alertMessage = address + " not found!\n\n***************************\n" +
+                                    "Enter more details like city, town, country\nor find a city or town " +
+                                    "close by and zoom in\nto find your precise location";
+                                alert(alertMessage)
+                        }
+                        $('#find_loading').html('');
+                }, "json");
+        return false;
+};

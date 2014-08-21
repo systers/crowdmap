@@ -95,6 +95,7 @@
 							<p></p>
 						</div>
 						
+<<<<<<< HEAD
 						<!---<h3>
 							<a href="#" class="small-link-button f-clear reset" onclick="removeParameterKey('mode', 'fl-incident-mode');">
 								<?php echo Kohana::lang('ui_main.clear')?>
@@ -190,9 +191,9 @@
 							<div class="f-custom_fields-box">
 								<?php echo form::open(NULL, array('method' => 'get')); ?>
                                 <div class="report_row" id="custom_field_row_0"><h4><?php echo Kohana::lang('ui_main.keywords'); ?></h4>
-					<?php echo form::input('custom_field_0', '' , ' class="text custom_text"'); ?>
+								<?php echo form::input('custom_field_0', '' , ' class="text custom_text"'); ?>
                                 </div>
-									<?php echo $custom_forms_filter; ?>
+								<?php echo $custom_forms_filter;?>
 								<?php echo form::close(); ?> 
                             </div>
 	
