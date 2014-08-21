@@ -8,7 +8,7 @@
 		{
 			echo "</table>";
 
-			if (isset($field_propeerty['field_default']))
+			if (isset($field_property['field_default']))
 			{
 				echo "<div class=\"" . $field_property['field_name'] . "\">";
 			}
