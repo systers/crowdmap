@@ -9,7 +9,7 @@
  * Values from 1 to 10
  * Default: 4
  */
-$config['marker_radius'] = "4";
+$config['marker_radius'] = "2.5";
 
 
 /**

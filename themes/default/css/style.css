@@ -161,6 +161,7 @@ div#main .withoutright{
 
 div#content{
     width: auto;
+    min-height: 700px; 
 }
 
 div#main .withright div#content{
@@ -179,7 +180,8 @@ div#footer{
     clear: both;
     color: #fff;
     background-color: #A8A8A8;
-    padding-bottom: 20px;
+    bottom: 0px;
+    position: relative;  
 }
 
 div#underfooter{
@@ -357,8 +359,8 @@ div.az_char_location_find input.az_char_buttons{
 /* azerbaijani characters */
 div.az_char_search{
     height: 30px;
-    float: left;
-    padding: 5px 0px 0px 110px;
+    float: right;
+    padding: 5px 0px 0px 0px;
 }
 
 div.az_char_search input.az_char_buttons{
@@ -2291,4 +2293,3 @@ div.ci_checkin {
 	font-size: 1em;
 	font-weight: bold;
 }
-

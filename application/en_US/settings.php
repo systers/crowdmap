@@ -16,6 +16,10 @@ $lang = array(
 		'between' => 'The allow alerts field does not appear to contain a valid value.',
 		'required' => 'The allow alerts field is required.',
 	) ,
+	'allow_opportunities' => array(
+		'between' => 'The allow opportunities field does not appear to contain a valid value.',
+		'required' => 'The allow opportunities field is required.',
+	) ,
 	'allow_reports' => array(
 		'between' => 'The allow reports field does not appear to contain a valid value.',
 		'required' => 'The allow reports field is required.',
@@ -149,6 +153,7 @@ $lang = array(
 		'allow_feed' => 'Include RSS News Feed on Website',
 		'allow_feed_category' => 'Create New Category from Feeds',
 		'allow_alerts' => 'Allow Users To Subscribe For Alerts',
+		'allow_opportunities' => 'Allow Users To Submit Opportunities',
 		'allow_reports' => 'Allow Users To Submit Reports',
 		'api_akismet' => 'Akismet Key',
 		'banner' => 'Site Banner',

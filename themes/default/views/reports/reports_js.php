@@ -50,9 +50,12 @@
 		$("input[id^='custom_field_']:checkbox").removeAttr("checked");
 		$("input[id^='custom_field_']:radio").removeAttr("checked");
 		$("input[id^='custom_field_']:text").val("");
-		// Hide textareas - should really replace with a keyword search field
+		// Only show text input fields - should really replace with a keyword search field
 		$("textarea[id^='custom_field_']").parent().remove();
-		  
+		$("input[id^='custom_field_']:radio").parent().remove();
+		$("input[id^='custom_field_']:checkbox").parent().remove();
+		$("select[id^='custom_field_']").parent().remove;
+  
 		// "Choose Date Range"" Datepicker
 		// JP: Added changeYear API option.
 		var dates = $( "#report_date_from, #report_date_to" ).datepicker({

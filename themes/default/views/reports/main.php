@@ -95,7 +95,7 @@
 							<p></p>
 						</div>
 						
-						<h3>
+						<!---<h3>
 							<a href="#" class="small-link-button f-clear reset" onclick="removeParameterKey('mode', 'fl-incident-mode');">
 								<?php echo Kohana::lang('ui_main.clear')?>
 							</a>
@@ -108,9 +108,9 @@
 										<span class="item-icon ic-webform">&nbsp;</span>
 										<span class="item-title"><?php echo Kohana::lang('ui_main.web_form'); ?></span>
 									</a>
-								</li>
+								</li>-->
 							
-							<?php foreach ($services as $id => $name): ?>
+					<!--		<?php foreach ($services as $id => $name): ?>
 								<?php
 									$item_class = "";
 									if ($id == 1) $item_class = "ic-sms";
@@ -178,7 +178,7 @@
 								</li>
 								
 							</ul>
-						</div>
+						</div>-->
 						<h3>
 							<a href="#" class="small-link-button f-clear reset" onclick="removeParameterKey('cff', 'fl-customFields');">
 								<?php echo Kohana::lang('ui_main.clear'); ?>
@@ -227,5 +227,5 @@
 
 		</div>
 		<!-- end reports block -->
-		
+		</div>	
 	</div>

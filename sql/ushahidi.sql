@@ -1423,7 +1423,8 @@ VALUES
   (72,'enable_category_filters_showhide','1'),
   (73,'show_reporting_options','1'),
   (74,'show_submit_report_tab','1'),
-  (75,'enable_filter_search','0');
+  (75,'enable_filter_search','0'),
+  (76,'allow_opportunities','1');
 -- --------------------------------------------------------
 
 /**

@@ -61,7 +61,10 @@ class Opportunities_Model extends ORM {
 		// Database instance
 		$db = new Database();
 
-		$sql = 'select incident_date, incident_title, incident.id, form_response from incident join form_response on form_response.incident_id=incident.id join form_field on form_field.form_id=incident.form_id where form_field_id=5';
+		$sql = 'select incident_date, incident_title, incident.id, form_response from incident'
+			. ' join form_response on form_response.incident_id=incident.id '
+			. 'join form_field on form_field.form_id=incident.form_id'
+			. ' where form_field.field_name="In Search Of"';
 		foreach ($db->query($sql) as $opportunity_needed)
 		{
 			// Create a list of all opportunities

@@ -62,6 +62,7 @@ class Settings_Controller extends Admin_Controller {
 			'items_per_page_admin' => '',
 			'blocks_per_row' => '',
 			'allow_alerts' => '',
+			'allow_opportunities' => '',
 			'allow_reports' => '',
 			'allow_comments' => '',
 			'allow_feed' => '',
@@ -111,6 +112,7 @@ class Settings_Controller extends Admin_Controller {
 			$post->add_rules('items_per_page_admin','required','between[5,50]');
 			$post->add_rules('blocks_per_row','required','numeric');
 			$post->add_rules('allow_alerts','required','between[0,1]');
+			$post->add_rules('allow_opportunities','required','between[0,1]');
 			$post->add_rules('allow_reports','required','between[0,1]');
 			$post->add_rules('allow_comments','required','between[0,2]');
 			$post->add_rules('allow_feed','required','between[0,1]');
@@ -279,6 +281,7 @@ class Settings_Controller extends Admin_Controller {
 				'items_per_page_admin' => $settings['items_per_page_admin'],
 				'blocks_per_row' => $settings['blocks_per_row'],
 				'allow_alerts' => $settings['allow_alerts'],
+				'allow_opportunities' => $settings['allow_opportunities'],
 				'allow_reports' => $settings['allow_reports'],
 				'allow_comments' => $settings['allow_comments'],
 				'allow_feed' => $settings['allow_feed'],
