@@ -95,7 +95,6 @@
 							<p></p>
 						</div>
 						
-<<<<<<< HEAD
 						<!---<h3>
 							<a href="#" class="small-link-button f-clear reset" onclick="removeParameterKey('mode', 'fl-incident-mode');">
 								<?php echo Kohana::lang('ui_main.clear')?>
