@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS `opportunities` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `resource_available` varchar(75) NOT NULL,
   `pcv_name` varchar(75) NOT NULL,
-  `available_from` datetime DEFAULT NULL,
-  `available_until` datetime DEFAULT NULL,
+  `available_from` varchar(75) DEFAULT NULL,
+  `available_until` varchar(75) DEFAULT NULL,
   `contact` varchar(75) NOT NULL,
   `add_info` text DEFAULT NULL,
   PRIMARY KEY (`id`)

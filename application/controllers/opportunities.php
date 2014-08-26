@@ -70,7 +70,6 @@ class Opportunities_Controller extends Main_Controller {
 	
 		// Copy the form as errors, so the errors will be stored with keys
 		// corresponding to the form field names
-		//$captcha = Captcha::factory();
 		$errors = $form;
 		$form_error = FALSE;
 		$form_sent = FALSE;
@@ -90,10 +89,8 @@ class Opportunities_Controller extends Main_Controller {
 			$post->add_rules('available_from', 'required', 'date_mmddyyyy', 'length[3,10]');
 			$post->add_rules('available_until', 'required', 'date_mmddyyyy', 'length[3,10]');
 			$post->add_rules('contact', 'required', 'length[3,20]');
-			$post->add_rules('add_info', 'required', 'length[3,50]');
+			$post->add_rules('add_info', 'length[3,50]');
 
-			// Test to see if things passed the rule checks
-			// Skip CSRF check since we have a CAPTCHA already
 			if ($post->validate())
 			{
 				// If valid post to Database
@@ -125,9 +122,6 @@ class Opportunities_Controller extends Main_Controller {
 		$this->template->content->errors = $errors;
 		$this->template->content->form_error = $form_error;
 	}
-
-		// Inline Javascript
-	//	$this->template->content->date_picker_js = $this->_date_picker_js();
 
 	/**
 	 * Opportunities Thanks Page
