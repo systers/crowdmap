@@ -35,35 +35,33 @@
 	// Map object
 	var map = null;
 	var radiusMap = null;
-
+	
 	if (urlParameters.length == 0)
 	{
 		urlParameters = {};
 	}
 	
 	$(document).ready(function() {
-	
-		//only show Fields for PCV Name, Contact Person, Counterpart Name, Director Name 	
-		$("input[id^='custom_field_1']:text").val("");	
-		$("input[id^='custom_field_2']:text").val("");
-		$("input[id^='custom_field_3']:text").val("");
-		$("input[id^='custom_field_4']:text").val("");
-		$("input[id^='custom_field_5']:text").parent().remove();
-
+		//Only show Custom Forms Filter PCV Name, Director Name, Contact Person and Keywords
+		$("h4").not(':contains("Name")').parent().remove();	
+		//add Not Selected values to the custom form fields that are drop downs
 		$("select[id^='custom_field_']").prepend('<option value="---NOT_SELECTED---"><?php echo Kohana::lang("ui_main.not_selected"); ?></option>');
 		$("select[id^='custom_field_']").val("---NOT_SELECTED---");
 		$("input[id^='custom_field_']:checkbox").removeAttr("checked");
 		$("input[id^='custom_field_']:radio").removeAttr("checked");
-		// Hide textareas, checkboxes, radio boxes  - should really replace with a keyword search field
+		$("input[id^='custom_field_']:text").val("");
+		// Only show text input fields - should really replace with a keyword search field
 		$("textarea[id^='custom_field_']").parent().remove();
 		$("input[id^='custom_field_']:radio").parent().remove();
 		$("input[id^='custom_field_']:checkbox").parent().remove();
-		$("select[id^='custom_field_']").parent().remove;
-		  
+		$("select[id^='custom_field_']").parent().remove();
+  
 		// "Choose Date Range"" Datepicker
+		// JP: Added changeYear API option.
 		var dates = $( "#report_date_from, #report_date_to" ).datepicker({
 			defaultDate: "+1w",
 			changeMonth: true,
+			changeYear: true,
 			numberOfMonths: 1,
 			dateFormat: "yy-mm-dd",
 			onSelect: function( selectedDate ) {
@@ -84,6 +82,7 @@
 		$(".btn-change-time").click(function(){
 			$("#tooltip-box").css({
 				'left': ($(this).offset().left - 80),
+				'top': ($(this).offset().right)
 			}).toggle();
 			
 	        return false;
@@ -263,7 +262,7 @@
 					
 					// Add the radius layer
 					addRadiusLayer(radiusMap, latitude, longitude);
-					
+						
 					drawCircle(radiusMap, latitude, longitude);
 					
 					// Detect map clicks
@@ -289,16 +288,6 @@
 						urlParameters["radius"] = currRadius;
 						urlParameters["start_loc"] = currLat + "," + currLon;
 					});
-
-					//Initiate geoCode
-                			$('.btn_find').on('click', function () {
-                        			geoCode();
-                			});
-					
-					var markers = new OpenLayers.Layer.Markers("Markers");
-    					map.addLayer(markers);
-    
-    					map.setCenter(new OpenLayers.LonLat(0, 0), 6);
 					
 					// Radius selector
 					$("select#alert_radius").change(function(e, ui) {
@@ -317,13 +306,18 @@
 						urlParameters["radius"] = newRadius;
 						urlParameters["start_loc"] = currLat+ "," + currLon;
 					});
+				
+					//Initiate geoCode when clicking the 'find location' button	
+					 $('.btn_find').on('click', function () {
+                                                geoCode();
+                                        });
 				}
 			}
 		}});
 
 
 	});
-
+	
 	/**
 	 * Registers the report hover event
 	 */
@@ -718,7 +712,6 @@
 				urlParameters["v"] = verificationStatus;
 			}
 
-
 			//Get the Keyword Custom Form Filter
 			var keywords = []; 
 				if ($("#custom_field_0").val() != '')
@@ -898,7 +891,6 @@
 		// Apply transform to each feature before adding it to the layer
 		preFeatureInsert = function(feature)
 		{
-			var point = new OpenLayers.Geometry.Point(feature.geometry.x, feature.geometry.y);
 			OpenLayers.Projection.transform(point, proj_4326, proj_900913);
 		};
 				
@@ -967,32 +959,31 @@
 		delete urlParameters[parameterKey];
 	}
 
-	//});
-//});
-
 /**
-* Google GeoCoder
-*/
+ * Google GeoCoder
+ */
 function geoCode() {
-	$('#find_loading').html('<img src="<?php echo url::file_loc('img')."media/img/loading_g.gif"; ?>">');
-	address = $("#location_find").val();
-	$.post("<?php echo url::site() . 'reports/geocode/' ?>", { address: address },
-		function(data){
+        $('#find_loading').html('<img src="<?php echo url::file_loc('img')."media/img/loading_g.gif"; ?>">');
+        address = $("#location_find").val();
+        $.post("<?php echo url::site(); ?>reports/geocode/", { address: address },
+                function(data){
                         if (data.status == 'success') {
-			// Clear the map first
-				markers.clearMarkers();
-				var lonlat = new OpenLayers.LonLat(data.longitude, data.latitude);
+				lonlat = new OpenLayers.LonLat(data.longitude, data.latitude);
+				
 				var marker = new OpenLayers.Marker(lonlat);
-				map.setCenter(lonlat,3);
-				markers.addMarker(markers);
-			} else {
+				markers.clearMarkers();
+				markers.addMarker(marker);
+				map.setCenter(lonlat, 7);
+
+                        } else {
                                 // Alert message to be displayed
                                 var alertMessage = address + " not found!\n\n***************************\n" +
                                     "Enter more details like city, town, country\nor find a city or town " +
                                     "close by and zoom in\nto find your precise location";
+
                                 alert(alertMessage)
                         }
                         $('#find_loading').html('');
                 }, "json");
         return false;
-};
+}
