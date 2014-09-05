@@ -81,7 +81,30 @@ class Json_Controller extends Template_Controller {
 	 * @param string $type type of geojson to generate. Valid options are: 'clusters' and 'markers'
 	 **/
 	protected function geojson($type)
-	{	
+	{
+		$category_id = (isset($_GET['c']) AND intval($_GET['c']) > 0) ? intval($_GET['c']) : 0;
+
+		if ($category_id == 0) {
+			$cat_ids = $db->query('SELECT id FROM category'); //ORM::factory('category', $id)->find_all();
+			foreach ($cat_ids as $cat_id) {
+				$color = $cat_id->category_color;//Kohana::config('settings.default_map_all');
+			}
+		}
+		
+		$icon = "";
+		$markers = FALSE;
+		
+		if (Kohana::config('settings.default_map_all_icon_id'))
+		{
+			$icon_object = ORM::factory('media')->find(Kohana::config('settings.default_map_all_icon_id'));
+			$icon = url::convert_uploaded_to_abs($icon_object->media_medium);
+		}
+		
+		//get ended projects
+		//$this->$incident_model = new Incident_Model;
+		//$projects_ended = $this->$incident_model->get_finished_incidents();
+		//$this->template->content-set('projects_ended', $projects_ended);
+
 		// Category ID
 		$category_id = (isset($_GET['c']) AND intval($_GET['c']) > 0) ? intval($_GET['c']) : 0;
 		// Get the category colour
@@ -89,7 +112,11 @@ class Json_Controller extends Template_Controller {
 		{
 			// Get the color & icon
 			$cat = ORM::factory('category', $category_id);
-			$color = $cat->category_color;
+		//	if ($category_id == 1) {
+		//		$color = 'f4a460';//$cat->category_color;
+		//	} else {
+				$color = $cat->category_color; 
+		//	}
 			$icon = "";
 			if ($cat->category_image)
 			{
@@ -216,7 +243,7 @@ class Json_Controller extends Template_Controller {
 				$link = Incident_Model::get_url($marker);
 			}
 			$item_name = $this->get_title($marker->incident_title, $link);
-
+			
 			$json_item = array();
 			$json_item['type'] = 'Feature';
 			$json_item['properties'] = array(
@@ -225,6 +252,7 @@ class Json_Controller extends Template_Controller {
 				'link' => $link,
 				'category' => array($category_id),
 				'color' => $color,
+				//'opacity' => $opacity, 
 				'icon' => $icon,
 				'thumb' => $thumb,
 				'timestamp' => strtotime($marker->incident_date),
@@ -509,11 +537,16 @@ class Json_Controller extends Template_Controller {
 		// Get Category Info
 		$category_title = "All Categories";
 		$category_color = "#990000";
-		if ($category_id > 0)
+		if ($category_id > 1)
 		{
 			$category = ORM::factory("category", $category_id);
 			if ($category->loaded)
 			{
+				if ($category_id == 1)
+				{
+					 $category_title = $category->category_title;
+                               		 $category_color = "#f4a460";
+				}
 				$category_title = $category->category_title;
 				$category_color = "#".$category->category_color;
 			}
