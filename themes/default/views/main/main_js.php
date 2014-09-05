@@ -24,10 +24,12 @@ Ushahidi.markerStokeWidth = <?php echo $marker_stroke_width; ?>;
 Ushahidi.markerStrokeOpacity = <?php echo $marker_stroke_opacity; ?>;
 
 // Default to most active month
-var startTime = <?php echo $active_startDate ?>;
+// JP: Will only have been set if chronological filter is active.
+var startTime = <?php echo (isset($active_startDate) ? $active_startDate : 0 ) ?>;
 
 // Default to most active month
-var endTime = <?php echo $active_endDate ?>;
+// JP: Will only have been set if chronological filter is active.
+var endTime = <?php echo (isset($active_endDate) ? $active_endDate : 0 ) ?>;
 
 var intervalTime = ''; // HT: manual time interval
 
@@ -183,6 +185,15 @@ function refreshTimeline(options) {
 	<?php }?>
 }
 
+// JP: Clears a search filter from the map and search bar.
+function clearSearchFilter() {
+	var prompt = $('#filter-search-prompt');
+	prompt.css('font-style', 'italic');
+	prompt.html('<?php echo Kohana::lang('ui_main.filter_search_prompt') ?>');
+	$('#filter_search_query').val('');
+	map.updateReportFilters({q: ''});
+}
+
 
 jQuery(function() {
 	var reportsURL = "<?php echo Kohana::config('settings.allow_clustering') == 1 ? "json/cluster" : "json"; ?>";
@@ -206,9 +217,12 @@ jQuery(function() {
 			longitude: <?php echo Kohana::config('settings.default_lon'); ?>
 		},
 
+		//Event Listener to restrict Zoom Out
+		eventListeners: { "zoomend": incidentZoom},
+
 		// Map controls
 		mapControls: [
-			new OpenLayers.Control.Navigation({ dragPanOptions: { enableKinetic: true } }),
+			new OpenLayers.Control.Navigation({ 'zoomWheelEnabled': false}),
 			new OpenLayers.Control.Attribution(),
 			new OpenLayers.Control.Zoom(),
 			new OpenLayers.Control.MousePosition({
@@ -241,7 +255,6 @@ jQuery(function() {
 		transform: false
 	}, true, true);
 
-
 	// Register the referesh timeline function as a callback
 	map.register("filterschanged", refreshTimeline);
 	setTimeout(function() { refreshTimeline({
@@ -249,7 +262,12 @@ jQuery(function() {
 		e: endTime
 	}); }, 800);
 
-
+	function incidentZoom(event) {
+		if (map.getZoom() < <?php echo Kohana::config('settings.default_zoom'); ?>) {
+			map.zoomTo(<?php echo Kohana::config('settings.default_zoom'); ?>);
+                        }       
+                }
+	
 	// Category Switch Action
 	$("ul#category_switch li > a").click(function(e) {
 		
@@ -271,6 +289,7 @@ jQuery(function() {
 		
 		// Update report filters
 		map.updateReportFilters({c: categoryId});
+		map.updateReportFilerts({ip});
 
 		e.stopPropagation();
 		return false;
@@ -309,6 +328,8 @@ jQuery(function() {
 	});
 		
 	// Timeslider and date change actions
+	// JP: Only execute if chronological filter is enabled.
+	<?php if (Kohana::config('settings.enable_chronological_filter')): ?>
 	$("select#startDate, select#endDate").selectToUISlider({
 		labels: 4,
 		labelSrc: 'text',
@@ -337,12 +358,13 @@ jQuery(function() {
 	$("select#intervalDate").change(function() {
 		$("select#startDate").trigger('change');
 	});
+	<?php endif; ?>
 	
 	// Media Filter Action
-	$('.media-filters a').click(function() {
+	$('.filters a').click(function() {
 		var mediaType = parseFloat(this.id.replace('media_', '')) || 0;
 		
-		$('.media-filters a.active').removeClass('active');
+		$('.filters a.active').removeClass('active');
 		$(this).addClass('active');
 
 		// Update the report filters
@@ -350,20 +372,17 @@ jQuery(function() {
 		
 		return false;
 	});
-	
-	//Execute the function when page loads
-	smartColumns();
 
-	// Inactive/Active Filter Action
-	$('.status-filters a').click(function() {
-		var statusType = parseFloat(this.id.replace('incident_active_', '')) || 0;
-		
-		$('.status-filters a.active').removeClass('active');
-		$(this).addClass('active');
-
-		// Update the report filters
-		map.updateReportFilters({t: statusType});
-		
+	// JP: Search Filter Action
+	$('#filter_search').submit(function() {
+		var searchQuery = $('#filter_search_query').val().trim();
+		if (searchQuery.length > 0) {
+			var resultsHTML = '<?php echo Kohana::lang('ui_main.map_updated'); ?>. <a href="/search?k='+searchQuery+'"><?php echo Kohana::lang('ui_main.see_list_of_found_reports'); ?></a> <?php echo Kohana::lang('ui_main.or'); ?> <a href="javascript:clearSearchFilter();"><?php echo Kohana::lang('ui_main.clear_search_filter'); ?></a>.';
+                	var prompt = $('#filter-search-prompt');
+			prompt.css('font-style', 'normal');
+			prompt.html(resultsHTML);
+			map.updateReportFilters({q: searchQuery});
+                }
 		return false;
 	});
 	

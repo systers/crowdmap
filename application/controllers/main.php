@@ -75,6 +75,8 @@ class Main_Controller extends Template_Controller {
 		$this->themes->api_url = Kohana::config('settings.api_url');
 		$this->template->header->submit_btn = $this->themes->submit_btn();
 		$this->template->header->languages = $this->themes->languages();
+		// JP: Allow the footer to have access to the languages dropdown so that the languages dropdown can be used outside the header in some themes.
+		$this->template->footer->languages = $this->template->header->languages;
 		$this->template->header->search = $this->themes->search();
 
 		// Set Table Prefix
@@ -154,22 +156,37 @@ class Main_Controller extends Template_Controller {
     {
         $this->template->header->this_page = 'home';
         $this->template->content = new View('main/layout');
+        // JP: Allow the main body content to have access to the submit button so that the submit button can be used outside of the header in some themes.
+        $this->template->content->submit_btn = $this->template->header->submit_btn;
+        // JP: Add the filter search, if applicable.
+        $this->template->content->filter_search = $this->themes->filter_search(); 
 
 		// Cacheable Main Controller
 		$this->is_cachable = TRUE;
 
-		// Map and Slider Blocks
+		// Map Block
 		$div_map = new View('main/map');
-		$div_timeline = new View('main/timeline');
 
 		// Filter::map_main - Modify Main Map Block
 		Event::run('ushahidi_filter.map_main', $div_map);
 
-		// Filter::map_timeline - Modify Main Map Block
-		Event::run('ushahidi_filter.map_timeline', $div_timeline);
-
 		$this->template->content->div_map = $div_map;
-		$this->template->content->div_timeline = $div_timeline;
+
+		// JP: Only add a timeline if the chronological filter is enabled.
+		if (Kohana::config('settings.enable_chronological_filter'))
+		{
+			// Slider Block
+			$div_timeline = new View('main/timeline');
+
+			// Filter::map_timeline - Modify Main Map Block
+			Event::run('ushahidi_filter.map_timeline', $div_timeline);
+
+			$this->template->content->div_timeline = $div_timeline;
+		}
+		else
+		{
+			$this->template->content->div_timeline = '';
+		}
 
 		// Check if there is a site message
 		$this->template->content->site_message = '';
@@ -232,7 +249,7 @@ class Main_Controller extends Template_Controller {
 			);
 		}
 		$this->template->content->categories = $parent_categories;
-
+		
 		// Get all active Layers (KMZ/KML)
 		$layers = array();
 		$config_layers = Kohana::config('map.layers'); // use config/map layers if set
@@ -297,6 +314,9 @@ class Main_Controller extends Template_Controller {
 		catch(Exception $e) {}
 		$this->template->content->external_apps = $external_apps;
 
+		// JP: Only get the incident dates if the chronological filter is enabled.
+		if (Kohana::config('settings.enable_chronological_filter')):
+		
         // Get The START, END and Incident Dates
 		$intervalDate = ""; // HT: manual intervalDate
         $startDate = "";
@@ -421,6 +441,8 @@ class Main_Controller extends Template_Controller {
 		$this->template->content->div_timeline->endDate = $endDate;
 		$this->template->content->div_timeline->intervalDate = $intervalDate; // HT: manual interval time selection options
 
+		endif; // end of chronological filter code		
+
 		// Javascript Header
 		$this->themes->map_enabled = TRUE;
 		$this->themes->slider_enabled = TRUE;
@@ -432,7 +454,15 @@ class Main_Controller extends Template_Controller {
 
 		// Map Settings
 		$marker_radius = Kohana::config('map.marker_radius');
-		$marker_opacity = Kohana::config('map.marker_opacity');
+		
+		$category_id = (isset($_GET['c']) AND intval($_GET['c']) > 0) ? intval($_GET['c']) : 0;
+		// Get the color & icon
+		if ($category_id == 1) {
+			$marker_opacity = '1';
+		} else {				 
+			$marker_opacity = Kohana::config('map.marker_opacity');
+		}
+
 		$marker_stroke_width = Kohana::config('map.marker_stroke_width');
 		$marker_stroke_opacity = Kohana::config('map.marker_stroke_opacity');
 
@@ -454,11 +484,12 @@ class Main_Controller extends Template_Controller {
 		    ? $marker_stroke_opacity * 0.1
 		    : 0.9;
 
-
-		$this->themes->js->active_startDate = $display_startDate;
-		$this->themes->js->active_endDate = $display_endDate;
+		// JP: The start date and end date variables will only have been set if the chronological filter is enabled.
+		$this->themes->js->active_startDate = (isset($display_startDate) ? $display_startDate : 0);
+		$this->themes->js->active_endDate = (isset($display_endDate) ? $display_endDate : 0);
 
 		$this->themes->js->blocks_per_row = Kohana::config('settings.blocks_per_row');
+
 	}
 	
 	/**

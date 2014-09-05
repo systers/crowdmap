@@ -600,10 +600,10 @@ class Incident_Model extends ORM {
 		
 		$projects_ended = array(); 
 		
-		$sql =	'SELECT FORM_RESPONSE as project_end, incident_id as id FROM FORM_RESPONSE'
-			. 'INNER JOIN FORM_FIELD ON (FORM_FIELD.ID=FORM_RESPONSE.FORM_FIELD_ID)'
-			. 'WHERE (FORM_FIELD.FIELD_NAME = "Project End Date")'
-			. 'AND form_response > curdate()';
+		$sql =	'select form_response.form_response, form_response.incident_id as project_end from form_response'
+		. 'inner join form_field on form_field.id=form_response.id '
+		. 'where form_field.field_name="Project End Date" '
+		. 'and form_response.form_response < curdate()';
 
 		foreach ($db->query($sql) as $project_ended)
 		{
