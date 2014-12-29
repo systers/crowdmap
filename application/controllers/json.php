@@ -81,9 +81,30 @@ class Json_Controller extends Template_Controller {
 	 * @param string $type type of geojson to generate. Valid options are: 'clusters' and 'markers'
 	 **/
 	protected function geojson($type)
-	{	
+	{
+		$color = Kohana::config('settings.default_map_all');
+		$icon = "";
+		$markers = FALSE;
+		
+		if (Kohana::config('settings.default_map_all_icon_id'))
+		{
+			$icon_object = ORM::factory('media')->find(Kohana::config('settings.default_map_all_icon_id'));
+			$icon = url::convert_uploaded_to_abs($icon_object->media_medium);
+		}
+		
 		// Category ID
 		$category_id = (isset($_GET['c']) AND intval($_GET['c']) > 0) ? intval($_GET['c']) : 0;
+		
+		// JP: Get all category colours
+		if ($category_id == 0){
+			$cat = ORM::factory('category', $category_id);
+                        $color = "FBF80C";//$cat->category_color;
+                        $icon = "";
+                        if ($cat->category_image)
+                        {
+                                $icon = url::convert_uploaded_to_abs($cat->category_image);
+                        }
+		}
 		// Get the category colour
 		if (Category_Model::is_valid_category($category_id))
 		{
@@ -216,7 +237,7 @@ class Json_Controller extends Template_Controller {
 				$link = Incident_Model::get_url($marker);
 			}
 			$item_name = $this->get_title($marker->incident_title, $link);
-
+			
 			$json_item = array();
 			$json_item['type'] = 'Feature';
 			$json_item['properties'] = array(
