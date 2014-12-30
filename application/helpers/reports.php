@@ -766,7 +766,7 @@ class reports_Core {
 		
 		// Split selected parameters on ","
 		// For simplicity, always turn them into arrays even theres just one value
-		$exclude_params = array('c', 'v', 'm', 'mode', 'sw', 'ne', 'start_loc');
+		$exclude_params = array('c', 'v', 'm', 'mode', 'st', 'sw', 'ne', 'start_loc');
 		foreach ($url_data as $key => $value)
 		{
 			if (in_array($key, $exclude_params) AND ! is_array($value))
@@ -947,7 +947,7 @@ class reports_Core {
 		if (isset($url_data['st']) AND is_array($url_data['st']))
 		{
 			$incident_status = array();
-			foreach ($url_data['v'] as $status)
+			foreach ($url_data['st'] as $status)
 			{
 				if (intval($status) >= 0)
 				{

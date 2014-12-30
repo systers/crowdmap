@@ -175,7 +175,7 @@ class Json_Controller extends Template_Controller {
 		$first_incident_id = (isset($_GET['i']) AND intval($_GET['i']) > 0)? intval($_GET['i']) : 0;
 		
 		$media_type = (isset($_GET['m']) AND intval($_GET['m']) > 0)? intval($_GET['m']) : 0;
-		
+		$status = (isset($_GET['st']) AND intval($_GET['st']) > 0)? intval($_GET['st']) : 0;	
 		foreach ($incidents as $marker)
 		{
 			// Handle both reports::fetch_incidents() response and actual ORM objects
@@ -594,11 +594,10 @@ class Json_Controller extends Template_Controller {
 		}
 		
 		// Apply project status filters
-		if (isset($_GET['st']) AND intval($_GET['st']) > 0)
+		if (isset($_GET['st']))
 		{
-			$query = "SELECT id AS id FROM ".$this->table_prefix."incident"
+			$query = "SELECT id FROM".$this->table_prefix."incident"
 				. "WHERE incident_status = :status ";
-
 			$params[':status'] = $_GET['st'];
 			$incident_id_in .= " AND i.id IN ( $query ) ";
 		}

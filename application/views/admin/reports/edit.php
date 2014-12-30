@@ -496,8 +496,8 @@
                                                                         {
                                                                                 echo " checked=\"checked\" ";
                                                                         }?>> <?php echo Kohana::lang('ui_main.yes');?>
-                                                                        <input type="radio" name="incident_status" value="0"
-                                                                        <?php if ($form['incident_status'] == 0)
+                                                                        <input type="radio" name="incident_status" value="2"
+                                                                        <?php if ($form['incident_status'] == 2)
                                                                         {
                                                                                 echo " checked=\"checked\" ";
                                                                         }?>> <?php echo Kohana::lang('ui_main.no');?>
