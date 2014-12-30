@@ -278,6 +278,12 @@ class reports_Core {
 		{
 			$incident->incident_verified = $post->incident_verified;
 		}
+
+		// Project status:  Only set if user has permission
+        if (isset($post->incident_status) AND Auth::instance()->has_permission('reports_status'))
+        {
+              $incident->incident_status = $post->incident_status;
+        }
 		
 		// Incident zoom
 		if ( ! empty($post->incident_zoom))
@@ -933,6 +939,28 @@ class reports_Core {
 				);
 			}
 			
+		}
+		
+		// 
+		// Check for status parameter
+		// 
+		if (isset($url_data['st']) AND is_array($url_data['st']))
+		{
+			$incident_status = array();
+			foreach ($url_data['v'] as $status)
+			{
+				if (intval($status) >= 0)
+				{
+					$incident_status[] = intval($status);
+				}
+			}
+			
+			if (count($incident_status) > 0)
+			{
+				array_push(self::$params, 
+					'i.incident_status IN ('.implode(",", $incident_status).')'
+				);
+			}
 		}
 		
 		// 

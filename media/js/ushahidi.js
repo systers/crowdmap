@@ -716,6 +716,7 @@
 	 *     z - {Number} The zoom level
 	 *     c - {Number} The category id
 	 *     m - {Number} The media type (0 - All, 1 - Pictures, 2 - Video 4 - News)
+	 *    st - {Number} Project Status (0 - All, 1 - Ended, 2 - Ongoing)
 	 *     s - {Number} Start date - Earliest date by which to filter the reports
 	 *     e - {Number} End date - Latest date by which to filter the reports
 	 */

@@ -353,6 +353,22 @@ jQuery(function() {
 	
 	//Execute the function when page loads
 	smartColumns();
+	
+	// Project Status Filter Action
+	$('.filters a').click(function() {
+		var status = parseFloat(this.id.replace('project_status_', '')) || 0;
+		
+		$('.filters a.active').removeClass('active');
+		$(this).addClass('active');
+
+		// Update the report filters
+		map.updateReportFilters({st: status});
+		
+		return false;
+	});
+	
+	//Execute the function when page loads
+	smartColumns();
 
 });
 

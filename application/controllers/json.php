@@ -592,6 +592,16 @@ class Json_Controller extends Template_Controller {
 			$params[':mtype'] = $_GET['m'];
 			$incident_id_in .= " AND i.id IN ( $query ) ";
 		}
+		
+		// Apply project status filters
+		if (isset($_GET['st']) AND intval($_GET['st']) > 0)
+		{
+			$query = "SELECT id AS id FROM ".$this->table_prefix."incident"
+				. "WHERE incident_status = :status ";
+
+			$params[':status'] = $_GET['st'];
+			$incident_id_in .= " AND i.id IN ( $query ) ";
+		}
 
 		// Fetch the timeline data
 		$query = 'SELECT UNIX_TIMESTAMP('.$select_date_text.') AS time, COUNT(i.id) AS number '
