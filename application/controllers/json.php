@@ -234,40 +234,7 @@ class Json_Controller extends Template_Controller {
 				'name' => $item_name,
 				'link' => $link,
 				'category' => array($category_id),
-				'color' => (if ! empty($projects_ended['project_end']))
-
-						{ 
-							if ($projects_ended['project_end'] == TRUE && $category_id=1) 
-								{ 
-									"d043ff": $color; 
-								} 
-									else {
-										"9900CC": $color;
-									}
-							if ($projects_ended['project_end'] == TRUE && $category_id=2) 
-								{
-									"004dff": $color;
-								}
-									else {
-										"3300FF": $color;
-									}
-							if ($projects_ended['project_end'] == TRUE && $category_id=3)
-								{
-									"b35900": $color;
-								}
-									else {
-										"663300": $color;
-									}
-							if ($projects_ended['project_end'] == TRUE && $category_id=4) 
-								{
-									"94ff5e": $color
-								}
-									else {
-										"339900": $color;
-									}
-						}	
-							return $color; 
-		
+				'color' => $color,
 				'icon' => $icon,
 				'thumb' => $thumb,
 				'timestamp' => strtotime($marker->incident_date),
@@ -624,6 +591,16 @@ class Json_Controller extends Template_Controller {
 
 			$params[':mtype'] = $_GET['m'];
 			$incident_id_in .= " AND i.id IN ( $query ) ";
+		}
+
+		// Apply status type filters
+		if (isset($_GET['t']) AND intval($_GET['t']) > 0)
+		{
+			$query = "SELECT id AS id FROM ".$this->table_prefix."incident"
+			    . "WHERE incident_active = :ttype ";
+
+			$params[':ttype'] = $_GET['t'];
+			$id_in .= " AND i.id IN ( $query ) ";
 		}
 
 		// Fetch the timeline data

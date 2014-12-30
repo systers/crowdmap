@@ -140,6 +140,7 @@ class Incident_Model extends ORM {
 			return strtotime($report->incident_date);
 		}
 	}
+
 	/**
 	 * Get the number of reports by date for dashboard chart
 	 *
@@ -586,32 +587,5 @@ class Incident_Model extends ORM {
 		
 		parent::save();
 	}
-	
-	/**
-	* return project end dates and assign to $project_end array() 
-	*/
-	public static function get_finished_incidents()
-	{
-		// Table Prefix
-                $table_prefix = Kohana::config('database.default.table_prefix');
 
-                // Database instance
-                $db = new Database();
-		
-		$projects_ended = array(); 
-		
-		$current_date = "SELECT CURDATE()";		
-
-		$sql =	'SELECT FORM_RESPONSE as project_end, incident_id as id FROM FORM_RESPONSE'
-			. 'INNER JOIN FORM_FIELD ON FORM_FIELD.ID=FORM_RESPONSE.FORM_FIELD_ID'
-			. 'WHERE (FORM_FIELD.FIELD_NAME = "Project End Date") <' .$current_date;
-		foreach ($db->query($sql) as $project_ended)
-		{
-			$projects_ended[$project_ended->id] = array(
-				$project_ended->id, 
-				$project_ended->project_end,
-			);
-		}
-		return $projects_ended;
-	}
 }
