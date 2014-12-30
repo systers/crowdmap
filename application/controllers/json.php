@@ -234,7 +234,40 @@ class Json_Controller extends Template_Controller {
 				'name' => $item_name,
 				'link' => $link,
 				'category' => array($category_id),
-				'color' => $color,
+				'color' => (if ! empty($projects_ended['project_end']))
+
+						{ 
+							if ($projects_ended['project_end'] == TRUE && $category_id=1) 
+								{ 
+									"d043ff": $color; 
+								} 
+									else {
+										"9900CC": $color;
+									}
+							if ($projects_ended['project_end'] == TRUE && $category_id=2) 
+								{
+									"004dff": $color;
+								}
+									else {
+										"3300FF": $color;
+									}
+							if ($projects_ended['project_end'] == TRUE && $category_id=3)
+								{
+									"b35900": $color;
+								}
+									else {
+										"663300": $color;
+									}
+							if ($projects_ended['project_end'] == TRUE && $category_id=4) 
+								{
+									"94ff5e": $color
+								}
+									else {
+										"339900": $color;
+									}
+						}	
+							return $color; 
+		
 				'icon' => $icon,
 				'thumb' => $thumb,
 				'timestamp' => strtotime($marker->incident_date),
