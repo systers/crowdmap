@@ -593,16 +593,6 @@ class Json_Controller extends Template_Controller {
 			$incident_id_in .= " AND i.id IN ( $query ) ";
 		}
 
-		// Apply status type filters
-		if (isset($_GET['t']) AND intval($_GET['t']) > 0)
-		{
-			$query = "SELECT id AS id FROM ".$this->table_prefix."incident"
-			    . "WHERE incident_active = :ttype ";
-
-			$params[':ttype'] = $_GET['t'];
-			$id_in .= " AND i.id IN ( $query ) ";
-		}
-
 		// Fetch the timeline data
 		$query = 'SELECT UNIX_TIMESTAMP('.$select_date_text.') AS time, COUNT(i.id) AS number '
 		    . 'FROM '.$this->table_prefix.'incident AS i '

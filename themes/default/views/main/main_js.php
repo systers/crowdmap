@@ -339,30 +339,14 @@ jQuery(function() {
 	});
 	
 	// Media Filter Action
-	$('.media-filters a').click(function() {
+	$('.filters a').click(function() {
 		var mediaType = parseFloat(this.id.replace('media_', '')) || 0;
 		
-		$('.media-filters a.active').removeClass('active');
+		$('.filters a.active').removeClass('active');
 		$(this).addClass('active');
 
 		// Update the report filters
 		map.updateReportFilters({m: mediaType});
-		
-		return false;
-	});
-	
-	//Execute the function when page loads
-	smartColumns();
-
-	// Inactive/Active Filter Action
-	$('.status-filters a').click(function() {
-		var statusType = parseFloat(this.id.replace('incident_active_', '')) || 0;
-		
-		$('.status-filters a.active').removeClass('active');
-		$(this).addClass('active');
-
-		// Update the report filters
-		map.updateReportFilters({t: statusType});
 		
 		return false;
 	});
