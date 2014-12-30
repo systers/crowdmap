@@ -780,6 +780,7 @@ CREATE TABLE IF NOT EXISTS `incident` (
   `incident_datemodify` datetime DEFAULT NULL,
   `incident_alert_status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0 - Not Tagged for Sending, 1 - Tagged for Sending, 2 - Alerts Have Been Sent',
   `incident_zoom` tinyint(4) DEFAULT NULL,
+  `incident_status` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `location_id` (`location_id`),
   KEY `incident_active` (`incident_active`),
