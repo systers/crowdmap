@@ -489,22 +489,22 @@
 									<?php endif; ?>
 								</div>
 								<div class="row">
-                                                                        <div class="f-col-bottom-1-col"><?php echo Kohana::lang('ui_main.project_ended');?>?</div>
-                                                                        <?php if (Auth::instance()->has_permission('incident_status')): ?>
-                                                                        <input type="radio" name="incident_status" value="1"
-                                                                        <?php if ($form['incident_status'] == 1)
-                                                                        {
-                                                                                echo " checked=\"checked\" ";
-                                                                        }?>> <?php echo Kohana::lang('ui_main.yes');?>
-                                                                        <input type="radio" name="incident_status" value="2"
-                                                                        <?php if ($form['incident_status'] == 2)
-                                                                        {
-                                                                                echo " checked=\"checked\" ";
-                                                                        }?>> <?php echo Kohana::lang('ui_main.no');?>
-                                                                        <?php else: ?>
-                                                                                <?php echo $form['incident_status'] ? Kohana::lang('ui_main.yes') : Kohana::lang('ui_main.no');?>
-                                                                        <?php endif; ?>
-                                                                </div>
+                                    <div class="f-col-bottom-1-col"><?php echo Kohana::lang('ui_main.project_ended');?>?</div>
+                                    <?php if (Auth::instance()->has_permission('incident_status')): ?>
+                                    <input type="radio" name="incident_status" value="1"
+                                    <?php if ($form['incident_status'] == 1)
+                                    {
+                                    	echo " checked=\"checked\" ";
+                    				}?>> <?php echo Kohana::lang('ui_main.yes');?>
+                                    <input type="radio" name="incident_status" value="2"
+                                    <?php if ($form['incident_status'] == 2)
+                                    {
+                                        echo " checked=\"checked\" ";
+                                    }?>> <?php echo Kohana::lang('ui_main.no');?>
+                                    <?php else: ?>
+                                            <?php echo $form['incident_status'] ? Kohana::lang('ui_main.yes') : Kohana::lang('ui_main.no');?>
+                                    <?php endif; ?>
+                                </div>
 							</div>
 							<div style="clear:both;"></div>
 						</div>

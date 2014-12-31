@@ -229,27 +229,18 @@
 
 				<!-- filters -->
 				<div class="filters clearingfix">
-					<div class="media-filters">
-						<strong><?php echo Kohana::lang('ui_main.media_filters'); ?></strong>
+					<div class="filters">
+						<strong><?php echo Kohana::lang('ui_main.filters'); ?></strong>
 						<ul>
 							<li><a id="media_0" class="active" href="#"><span><?php echo Kohana::lang('ui_main.all'); ?></span></a></li>
 							<li><a id="media_4" href="#"><span><?php echo Kohana::lang('ui_main.news'); ?></span></a></li>
 							<li><a id="media_1" href="#"><span><?php echo Kohana::lang('ui_main.pictures'); ?></span></a></li>
 							<li><a id="media_2" href="#"><span><?php echo Kohana::lang('ui_main.video'); ?></span></a></li>
-						</ul>
-					</div>
-						</br >
-						</br >
-					<div class="status-filters">
-						<strong><?php echo Kohana::lang('ui_main.status_filters'); ?></strong>	
-						<ul>
-                            <li><a id="project_status_0" class="active" href="#"><span><?php echo Kohana::lang('ui_main.all'); ?></span></a></li>
 							<li><a id="project_status_1" href="#"><span><?php echo Kohana::lang('ui_main.project_ended'); ?></span></a></li>
-                        	<li><a id="project_status_2" href="#"><span><?php echo Kohana::lang('ui_main.project_ongoing'); ?></span></a></li>
+							<li><a id="project_status_2" href="#"><span><?php echo Kohana::lang('ui_main.project_ongoing'); ?></span></a></li>
 						</ul>
 					</div>
 				</div>
-
 					<?php
 					// Action::main_filters - Add items to the main_filters
 					Event::run('ushahidi_action.map_main_filters');
