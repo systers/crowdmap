@@ -95,16 +95,6 @@ class Json_Controller extends Template_Controller {
 		// Category ID
 		$category_id = (isset($_GET['c']) AND intval($_GET['c']) > 0) ? intval($_GET['c']) : 0;
 		
-		// JP: Get all category colours
-		if ($category_id == 0){
-			$cat = ORM::factory('category', $category_id);
-                        $color = "FBF80C";//$cat->category_color;
-                        $icon = "";
-                        if ($cat->category_image)
-                        {
-                                $icon = url::convert_uploaded_to_abs($cat->category_image);
-                        }
-		}
 		// Get the category colour
 		if (Category_Model::is_valid_category($category_id))
 		{
@@ -237,7 +227,7 @@ class Json_Controller extends Template_Controller {
 				$link = Incident_Model::get_url($marker);
 			}
 			$item_name = $this->get_title($marker->incident_title, $link);
-			
+			if ($category_id == 0) { $color=$this->get_color($category_id); } else { $color=$color;}
 			$json_item = array();
 			$json_item['type'] = 'Feature';
 			$json_item['properties'] = array(
@@ -884,5 +874,20 @@ class Json_Controller extends Template_Controller {
 		$item_name = "<a href='$url'>".$title."</a>";
 		$item_name = str_replace(array(chr(10),chr(13)), ' ', $item_name);
 		return $item_name;
+	}
+	
+	/**
+	 * Get encoded title linked to url
+	 * @param $category_id
+	 * @return $color1
+	 */
+	protected function get_color($category_id)
+	{
+		if ($category_id == 0) 
+		{
+			$cat = ORM::factory('category', $category_id=1);
+                        $color = $cat->category_color;	
+		}
+		return $color;
 	}
 }
