@@ -19,7 +19,7 @@ class members_Core {
 			'dashboard' => Kohana::lang('ui_admin.dashboard'),
 			'reports' => Kohana::lang('ui_admin.my_reports'),
 			'alerts' => Kohana::lang('ui_admin.my_alerts'),
-			'private' => Kohana::lang('ui_admin.private_messages'),
+			'private' => Kohana::lang('ui_admin.private_messages')
 		);
 		
 		Event::run('ushahidi_action.nav_members_main_top', $tabs);
