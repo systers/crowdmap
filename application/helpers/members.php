@@ -20,7 +20,6 @@ class members_Core {
 			'reports' => Kohana::lang('ui_admin.my_reports'),
 			'alerts' => Kohana::lang('ui_admin.my_alerts'),
 			'private' => Kohana::lang('ui_admin.private_messages'),
-			'faq' => Kohana::lang('ui_admin.faqs')
 		);
 		
 		Event::run('ushahidi_action.nav_members_main_top', $tabs);
@@ -75,29 +74,6 @@ class members_Core {
         Event::run('ushahidi_action.nav_members_private', $this_sub_page);
     }
 
-
-	/**
-     * Generate FAQ Sub Tab Menus
-     * @param string $this_sub_page
-     * @return string $menu
-     */
-    public static function faq_subtabs($this_sub_page = FALSE)
-    {
-        $menu = "";
-
-        $menu .= ($this_sub_page == "view")
-			? Kohana::lang('ui_admin.faqs') 
-			: "<a href=\"".url::site()."members/faq\">".Kohana::lang('ui_admin.faq')."</a>";
-
-	//$menu .= ($this_sub_page == "edit")
-	//	 	? Kohana::lang('ui_admin.new_alert') 
-	//	 	: "<a href=\"".url::site()."members/alerts/edit\">".Kohana::lang('ui_admin.new_alert')."</a>";
-
-        echo $menu;
-        
-        // Action::nav_members_alerts - Add items to the members alerts navigation tabs
-        Event::run('ushahidi_action.nav_members_alerts', $this_sub_page);
-    }
 
 	/**
      * Generate Alerts Sub Tab Menus
