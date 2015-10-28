@@ -97,7 +97,7 @@ class members_Core {
         // Action::nav_members_alerts - Add items to the members alerts navigation tabs
         Event::run('ushahidi_action.nav_members_alerts', $this_sub_page);
     }
-	
+
 	
 	/**
 	 * Get either a Gravatar URL or complete image tag for a specified email address.

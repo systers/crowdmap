@@ -1145,6 +1145,21 @@ CREATE TABLE IF NOT EXISTS `private_message` (
 -- --------------------------------------------------------
 
 /**
+ * Table structure for table `faq`
+ *
+ */
+
+CREATE TABLE IF NOT EXISTS `faq` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `question` text NOT NULL,
+  `answer` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Stores the FAQs' AUTO_INCREMENT=1 ;
+
+
+-- --------------------------------------------------------
+
+/**
  * Table structure for table `rating`
  *
  */

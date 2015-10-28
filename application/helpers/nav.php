@@ -80,6 +80,17 @@ class nav_Core {
 			}
 		}
 		
+		// FAQ
+		if( ! in_array('faq',$dontshow))
+		{
+				$menu_items[] = array( 
+					'page' => 'faq',
+					'url' => url::site('faq'),
+					'name' => Kohana::lang('ui_main.faqs')
+				);	
+		}
+
+
 		// Custom Pages
 		
 		if( ! in_array('pages',$dontshow))
