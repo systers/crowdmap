@@ -21,5 +21,4 @@ $config['driver'] = 'native';
  */
 $config['options'] = NULL;
 
-
 $config['max_imap_messages'] = 10;

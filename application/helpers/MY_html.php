@@ -51,7 +51,9 @@ class html extends html_Core {
 	 * @param bool $encode Encode html entities?
 	 * @return string
 	 */
-	public function strip_tags($input, $encode = TRUE)
+	 
+	 	//DU : made function strip_tags() static
+	public static function strip_tags($input, $encode = TRUE)
 	{
 		require_once APPPATH.'libraries/htmlpurifier/HTMLPurifier.auto.php';
 
@@ -74,7 +76,9 @@ class html extends html_Core {
 	 * 
 	 * @return string
 	 **/
-	public function allowed_html()
+	 
+	 //DU : made function allowed_html() static
+	public static function allowed_html()
 	{
 		require_once APPPATH.'libraries/htmlpurifier/HTMLPurifier.auto.php';
 		
@@ -98,7 +102,9 @@ class html extends html_Core {
 	 * @param bool $double_encode
 	 * @return string
 	 */
-	public function escape($input, $double_encode = FALSE)
+	 
+	 //DU : made function escape() static
+	public static function escape($input, $double_encode = FALSE)
 	{
 		// Ensure we have valid correctly encoded string..
 		// http://stackoverflow.com/questions/1412239/why-call-mb-convert-encoding-to-sanitize-text

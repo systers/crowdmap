@@ -495,7 +495,7 @@ STATSCOLLECTOR;
 	 * @param sitename - name of the instance
 	 * @param url - base url
 	 */
-	public function create_site( $sitename, $url)
+	public static function create_site( $sitename, $url)
 	{
 		$stat_url = Kohana::config('config.external_site_protocol').'://tracker.ushahidi.com/px.php?task=cs&sitename='.urlencode($sitename).'&url='.urlencode($url);
 

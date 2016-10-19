@@ -11,6 +11,8 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License (LGPL) 
  */
+
+
 ?>
 		<!-- Top reportbox section-->
 		<div class="rb_nav-controls r-5">
@@ -46,6 +48,7 @@
 					$incident_id = $incident->incident_id;
 					$incident_title = $incident->incident_title;
 					$incident_description = $incident->incident_description;
+				//$form_data = ORM::Factory('form_response')->join('form_response', 'form_field_id', 'incident_id')->where('incident_id', $incident_id)->find_all();
 					$incident_url = Incident_Model::get_url($incident_id);
 					//$incident_category = $incident->incident_category;
 					// Trim to 150 characters without cutting words
@@ -84,6 +87,15 @@
 							}
 						}
 					}
+	$article = ORM::factory('form_field')->select_list('id', 'field_name');
+
+
+	$articles = ORM::factory('form_response')->select_list('id', 'form_response');
+
+
+ 
+
+
 				?>
 				<div id="incident_<?php echo $incident_id ?>" class="rb_report <?php echo $incident_verified_class; ?>">
 					<div class="r_media">
@@ -133,11 +145,12 @@
 								<?php echo $incident_verified; ?>
 							</h3>
 						<p class="r_date r-3 bottom-cap"><?php echo $incident_date; ?></p>
-						<div class="r_description"> <?php echo $incident_description; ?>  
+						<div class="r_description"> 
 						  <a class="btn-show btn-more" href="#incident_<?php echo $incident_id ?>"><?php echo Kohana::lang('ui_main.more_information'); ?> &raquo;</a> 
 						  <a class="btn-show btn-less" href="#incident_<?php echo $incident_id ?>">&laquo; <?php echo Kohana::lang('ui_main.less_information'); ?></a> 
 						</div>
 						<p class="r_location"><a href="<?php echo url::site("reports/?l=$location_id"); ?>"><?php echo html::specialchars($location_name); ?></a></p>
+					<p><?php echo $incident_id ?></p>
 						<?php
 						// Action::report_extra_details - Add items to the report list details section
 						Event::run('ushahidi_action.report_extra_details', $incident_id);

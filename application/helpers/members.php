@@ -111,7 +111,9 @@ class members_Core {
 	 * @return String containing either just a URL or a complete image tag
 	 * @source http://gravatar.com/site/implement/images/php/
 	 */
-	public function gravatar($email, $s = 80, $d = 'mm', $r = 'g', $img = FALSE, $atts = array())
+	 
+	 //DU : made function gravatar() static
+	public static function gravatar($email, $s = 80, $d = 'mm', $r = 'g', $img = FALSE, $atts = array())
 	{
 		$url = Kohana::config('core.site_protocol').'://secure.gravatar.com/avatar/'
 			. md5(strtolower(trim( $email)))

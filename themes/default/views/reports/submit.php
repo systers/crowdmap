@@ -135,13 +135,13 @@
 				<?php echo $custom_forms; ?>
 
 				<div class="report_optional">
-					<h3><?php echo Kohana::lang('ui_main.reports_optional'); ?></h3>
+					<h3><?php echo Kohana::lang('ui_main.reports_optional'); ?></h3><span class="required">*</span>
 					<div class="report_row">
-						<h4><?php echo Kohana::lang('ui_main.reports_first'); ?></h4>
+						<h4><?php echo Kohana::lang('ui_main.reports_first'); ?></h4><span class="required">*</span>
 						<?php print form::input('person_first', $form['person_first'], ' class="text long"'); ?>
 					</div>
 					<div class="report_row">
-						<h4><?php echo Kohana::lang('ui_main.reports_last'); ?></h4>
+						<h4><?php echo Kohana::lang('ui_main.reports_last'); ?></h4><span class="required">*</span>
 						<?php print form::input('person_last', $form['person_last'], ' class="text long"'); ?>
 					</div>
 					<div class="report_row">
@@ -210,24 +210,7 @@
 						<?php print form::input('location_find', '', ' title="'.Kohana::lang('ui_main.location_example').'" class="findtext"'); ?>
 						<input type="button" name="button" id="button" value="<?php echo Kohana::lang('ui_main.find_location'); ?>" class="btn_find" />
 						<div id="find_loading" class="report-find-loading"></div>
-			 <!-- azerbaijani characters -->			
-			<div class="az_char_location_find">
-                		<div class="az_char_table">
-                		<?php echo form::open("az_char"); ?>
-                		<ul class="az_buttons">
-                		<li class="az_buttons"><input type="button" id="az_char_buttons_e" value="ə" class="az_char_buttons"></li>
-                		<li class="az_buttons"><input type="button" id="az_char_buttons_c" value="ç" class="az_char_buttons"></li>
-                		<li class="az_buttons"><input type="button" id="az_char_buttons_g" value="ğ" class="az_char_buttons"></li>
-                		<li class="az_buttons"><input type="button" id="az_char_buttons_i" value="ı" class="az_char_buttons"></li>
-                		<li class="az_buttons"><input type="button" id="az_char_buttons_o" value="ö" class="az_char_buttons"></li>
-                		<li class="az_buttons"><input type="button" id="az_char_buttons_u" value="ü" class="az_char_buttons"></li>
-                		<li class="az_buttons"><input type="button" id="az_char_buttons_s" value="ş" class="az_char_buttons"></li>
-                		<li class="az_buttons"><input type="button" id="az_char_buttons_w" value="w" class="az_char_buttons"></li>
-                		</ul>
-                		<?php form::close(); ?>
-                		</div>
-			</div>
-			 <!-- azerbaijani characters -->
+			
 						<div style="clear:both;" id="find_text"><?php echo Kohana::lang('ui_main.pinpoint_location'); ?></div>
 					</div>
 				</div>

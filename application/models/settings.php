@@ -189,7 +189,7 @@ class Settings_Model extends ORM {
 	 * @param    array $keys 
 	 * @return   array
 	 */
-	public function get_settings($keys)
+	public static function get_settings($keys)
 	{
 		// For old schema just return everything
 		if (! self::new_schema())

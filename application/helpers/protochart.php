@@ -19,7 +19,9 @@ class protochart {
 	 * height: height of the chart in pixels
 	 *
 	 */
-	public function chart($name='chart',$data,$options_array=null,$custom_color=null,$width=400,$height=300) {
+	 
+	 //DU : made function chart() static
+	public static function chart($name='chart',$data,$options_array=null,$custom_color=null,$width=400,$height=300) {
 		
 		// Set default options
 		if($options_array === null) {
